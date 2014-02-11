@@ -1,19 +1,19 @@
 # /usr/bin/env python3 vim:fileencoding=utf-8
 #
-# Author: R.F. Smith <rsmith@xs4all.nl> Created: 2013-11-20 22:08:38 +0100
+# Author: R.F. Smith <rsmith@xs4all.nl>
+# Created: 2013-11-20 22:08:38 +0100
 # Modified: $Date$
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to install.py. This work is published from the
 # Netherlands. See http://creativecommons.org/publicdomain/zero/1.0/
 
-"""Script to chech which files need to be installed."""
+"""Script to install files."""
 
 import sys
 import os
 import subprocess
 import check
-
 
 __version__ = '$Revision$'[11:-2]
 
