@@ -90,11 +90,10 @@ def main(argv):
             ansiprint("'{}' does not exist.".format(dest), fg=30, bg=41)
             continue
         if not identical(src, dest):
+            ansiprint("'{}' differs from '{}'.".format(src, dest), fg=31)
             if diffs:
                 args = ['diff', '-u', '-d', src, dest]
                 print(subprocess.check_output(args))
-            elif verbose:
-                ansiprint("'{}' differs from '{}'.".format(src, dest), fg=31)
         elif verbose:
             ansiprint("'{}' and '{}' are the same.".format(src, dest), fg=32)
 
