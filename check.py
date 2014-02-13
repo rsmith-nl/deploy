@@ -42,7 +42,7 @@ def parse(lines):
         else:
             cmds = None
             src, perm, dest = items
-        yield src, perm, dest, cmds
+        yield src, int(perm), dest, cmds
 
 
 def identical(src, dest):
@@ -76,6 +76,12 @@ def ansiprint(s, fg='', bg=''):
 def main(argv):
     """Entry point for this script.
     """
+    if '-h' in argv:
+        print('Usage: {} [-h][-d][-v]'.format(argv[0]))
+        print('-h: Help.')
+        print('-d: Show diffs.')
+        print('-v: Verbose; report if files are the same.')
+        sys.exit(0)
     diffs = '-d' in argv
     verbose = '-v' in argv
     filelist = '.'.join(['filelist', os.environ['USER']])
@@ -93,7 +99,10 @@ def main(argv):
             ansiprint("'{}' differs from '{}'.".format(src, dest), fg=31)
             if diffs:
                 args = ['diff', '-u', '-d', src, dest]
-                print(subprocess.check_output(args))
+                # Use Popen because diff can return 1!
+                with subprocess.Popen(args, stdout=subprocess.PIPE) as proc:
+                    out, _ = proc.communicate(timeout=5)
+                print(out.decode())
         elif verbose:
             ansiprint("'{}' and '{}' are the same.".format(src, dest), fg=32)
 
