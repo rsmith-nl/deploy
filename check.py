@@ -1,4 +1,5 @@
-# /usr/bin/env python3 vim:fileencoding=utf-8
+# /usr/bin/env python2
+# vim:fileencoding=utf-8
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
@@ -10,6 +11,7 @@
 
 """Script to check which files need to be installed."""
 
+from __future__ import division, print_function
 import sys
 import os
 import subprocess
@@ -31,7 +33,7 @@ def parse(lines):
     :yields: A tuple (src, perm, dest, commands)
     """
     for ln in lines:
-        items = ln.split(maxsplit=3)
+        items = ln.split(None, 3)
         if len(items) < 3:
             continue
         if len(items) > 3:

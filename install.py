@@ -1,4 +1,5 @@
-# /usr/bin/env python3 vim:fileencoding=utf-8
+# /usr/bin/env python2
+# vim:fileencoding=utf-8
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
@@ -10,6 +11,7 @@
 
 """Script to install files."""
 
+from __future__ import division, print_function
 import sys
 import os
 import subprocess
