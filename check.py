@@ -44,7 +44,7 @@ def parse(lines):
         else:
             cmds = None
             src, perm, dest = items
-        yield src, int(perm), dest, cmds
+        yield src, int(perm, base=8), dest, cmds
 
 
 def identical(src, dest):
