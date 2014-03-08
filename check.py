@@ -33,13 +33,14 @@ def parse(lines):
     :yields: A tuple (src, perm, dest, commands)
     """
     for ln in lines:
+        ln = ln.strip()
+        if ln.startswith('#'):
+            continue
         items = ln.split(None, 3)
         if len(items) < 3:
             continue
         if len(items) > 3:
             src, perm, dest, rem = items
-            if src.startswith('#'):
-                continue
             cmds = rem.split()
         else:
             cmds = None
