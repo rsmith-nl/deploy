@@ -29,8 +29,8 @@ def parse(lines):
     installed file and then the destination file name. The rest of the line is
     a post-install command.
 
-    :param lines: A list of lines
-    :yields: A tuple (src, perm, dest, commands)
+    :param lines: a list of lines
+    :yields: a tuple (src, perm, dest, commands)
     """
     for ln in lines:
         ln = ln.strip()
@@ -51,8 +51,8 @@ def parse(lines):
 def identical(src, dest):
     """Test whether two files are identical.
 
-    :param src: Path of the source file.
-    :param dest: Path of the destination file.
+    :param src: path of the source file.
+    :param dest: path of the destination file.
     :returns: True if src and dest are the same, False otherwise.
     """
     csrc = subprocess.check_output(['sha256', '-q', src])
@@ -66,27 +66,30 @@ def identical(src, dest):
 def ansiprint(s, fg='', bg=''):
     """Prints a text with ansi colors.
 
-    :param fg: optional foreground color.
-    :param fg: optional background color.
+    :param fg: optional foreground color
+    :param fg: optional background color
     """
+    esc = '\033[{:d}m'
     if fg:
-        fg = '\033[{:d}m'.format(fg)
+        fg = esc.format(fg)
     if bg:
-        bg = '\033[{:d}m'.format(bg)
-    print(''.join([fg, s, bg, '\033[0m']))
+        bg = esc.format(bg)
+    print(''.join([fg, bg, s, esc.format(0)]))
 
 
 def main(argv):
-    """Entry point for this script.
+    """Entry point for the check script.
+
+    :param argv: command line arguments
     """
     if '-h' in argv:
         print('Usage: {} [-h][-d][-v]'.format(argv[0]))
         print('-h: Help.')
-        print('-d: Show diffs.')
-        print('-v: Verbose; report if files are the same.')
+        print('-d: (diff); Print the diff(1) output for different files.')
+        print('-l: (long); lists all files, not just the different ones.')
         sys.exit(0)
     diffs = '-d' in argv
-    verbose = '-v' in argv
+    verbose = '-l' in argv
     filelist = '.'.join(['filelist', os.environ['USER']])
     try:
         with open(filelist, 'r') as input:
@@ -103,8 +106,9 @@ def main(argv):
             if diffs:
                 args = ['diff', '-u', '-d', src, dest]
                 # Use Popen because diff can return 1!
-                with subprocess.Popen(args, stdout=subprocess.PIPE) as proc:
-                    out, _ = proc.communicate(timeout=5)
+                proc = subprocess.Popen(args, stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
+                out, _ = proc.communicate()
                 print(out.decode())
         elif verbose:
             ansiprint("'{}' and '{}' are the same.".format(src, dest), fg=32)

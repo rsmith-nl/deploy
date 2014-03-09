@@ -23,6 +23,8 @@ __version__ = '$Revision$'[11:-2]
 
 def main(argv):
     """Entry point for this script.
+
+    :param argv: command line arguments
     """
     if '-h' in argv:
         print('Usage: {} [-h][-v]'.format(argv[0]))
