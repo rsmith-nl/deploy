@@ -40,7 +40,7 @@ def main(argv):
         print(e)
         sys.exit(1)
     for src, perm, dest, cmds in check.parse(lines):
-        if not check.identical(src, dest):
+        if check.compare(src, dest) is not 1:
             try:
                 copyfile(src, dest)
                 os.chmod(dest, perm)
