@@ -14,29 +14,35 @@
 from __future__ import division, print_function
 import sys
 import os
+import platform
 import subprocess
 from shutil import copyfile
 
 __version__ = '$Revision$'[11:-2]
 
 
-def parse(lines):
-    """Generator to parse a list of lines from a filelist.USER file. The lines
-    in these files have a special format. Lines where the first non-whitespace
-    character is a '#' are ignored, as are blank lines and lines that have less
-    than three items.
+def parsefilelist(name):
+    """Parse a install file list.
 
-    Lines should start with a source file name, then a permission for the
-    installed file and then the destination file name. The rest of the line is
-    a post-install command.
+    An install file list should have the FQDN for the hosts on the first
+    non-comment line. This should include the string returned by
+    platform.node().
 
-    :param lines: a list of lines
-    :yields: a tuple (src, perm, dest, commands)
+    :param name: the name of a file to parse
+    :returns: list of (src, perm, dest, commands) tuples
     """
+    with open(name, 'r') as infile:
+        lines = infile.readlines()
+    lines = [ln.strip() for ln in lines]
+    lines = [ln for ln in lines if len(ln) and not ln.startswith('#')]
+    hostnames = lines[0]
+    pn = platform.node()
+    if pn not in hostnames:
+        ve = "First line from '{}' doesn't include '{}'".format(name, pn)
+        raise ValueError(ve)
+    lines = lines[1:]
+    installs = []
     for ln in lines:
-        ln = ln.strip()
-        if ln.startswith('#'):
-            continue
         items = ln.split(None, 3)
         if len(items) < 3:
             continue
@@ -46,7 +52,8 @@ def parse(lines):
         else:
             cmds = None
             src, perm, dest = items
-        yield src, int(perm, base=8), dest, cmds
+        installs.append((src, perm, dest, cmds))
+    return installs
 
 
 def compare(src, dest):
@@ -126,14 +133,16 @@ def main(argv):
     install = '-i' in argv
     if install:
         diffs = False
-    filelist = '.'.join(['filelist', os.environ['USER']])
+    fname = '.'.join(['filelist', os.environ['USER']])
     try:
-        with open(filelist, 'r') as input:
-            lines = input.readlines()
+        installs = parsefilelist(fname)
     except IOError as e:
         print(e)
         sys.exit(1)
-    for src, perm, dest, cmds in parse(lines):
+    except ValueError as e:
+        print(e)
+        sys.exit(2)
+    for src, perm, dest, cmds in installs:
         rv = compare(src, dest)
         if rv == 2:
             if install:
