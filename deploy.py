@@ -52,7 +52,7 @@ def parsefilelist(name):
         else:
             cmds = None
             src, perm, dest = items
-        installs.append((src, perm, dest, cmds))
+        installs.append((src, int(perm, base=8), dest, cmds))
     return installs
 
 
