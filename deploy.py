@@ -160,7 +160,7 @@ def main(argv):
                     proc = subprocess.Popen(args, stdout=subprocess.PIPE,
                                             stderr=subprocess.PIPE)
                     out, _ = proc.communicate()
-                    print(out.decode())
+                    print(out)
         elif rv == 1 and verbose:
             ansiprint(sm.format(src, dest), fg=32)
 
