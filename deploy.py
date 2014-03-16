@@ -156,7 +156,7 @@ def main(argv):
             else:
                 ansiprint(df.format(src, dest), fg=31)
                 if diffs:
-                    args = ['diff', '-u', '-d', src, dest]
+                    args = ['diff', '-u', '-d', dest, src]
                     # Use Popen because diff can return 1!
                     proc = subprocess.Popen(args, stdout=subprocess.PIPE,
                                             stderr=subprocess.PIPE)
