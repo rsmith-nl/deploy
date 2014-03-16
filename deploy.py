@@ -14,6 +14,7 @@
 from __future__ import division, print_function
 import sys
 import os
+import pwd
 import platform
 import subprocess
 from shutil import copyfile
@@ -133,7 +134,7 @@ def main(argv):
     install = '-i' in argv
     if install:
         diffs = False
-    fname = '.'.join(['filelist', os.environ['USER']])
+    fname = '.'.join(['filelist', pwd.getpwuid(os.getuid())[0]])
     try:
         installs = parsefilelist(fname)
     except IOError as e:
