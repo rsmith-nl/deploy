@@ -147,12 +147,12 @@ def main(argv):
         rv = compare(src, dest)
         if rv == 2:
             if install:
-                do_install(src, perm, dest, cmds, verbose)
+                do_install(src, perm, dest, cmds, True)
             else:
                 ansiprint(ne.format(dest), fg=30, bg=41)
         if rv == 0:
             if install:
-                do_install(src, perm, dest, cmds, verbose)
+                do_install(src, perm, dest, cmds, True)
             else:
                 ansiprint(df.format(src, dest), fg=31)
                 if diffs:
