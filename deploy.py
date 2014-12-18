@@ -83,9 +83,9 @@ def ansiprint(s, fg='', bg='', i=False):
     :param fg: optional background color
     """
     esc = '\033[{:d}{}m'
-    iv=''
+    iv = ''
     if i:
-        iv=";1"
+        iv = ";1"
     if fg:
         fg = esc.format(fg, iv)
     if bg:
@@ -114,6 +114,27 @@ def do_install(src, perm, dest, cmds, verbose):
     if verbose:
         s = "File '{}' was successfully installed as '{}'.".format(src, dest)
         ansiprint(s, fg=32)
+
+
+def colordiff(txt):
+    """Print a colored diff.
+
+    :param txt: test to print
+    """
+    for line in txt.splitlines():
+        if line.startswith(('+++ ', '--- ')):
+            ansiprint(line, fg=33, i=True)
+            continue
+        if line.startswith('+'):
+            ansiprint(line, fg=32, i=True)
+            continue
+        if line.startswith('-'):
+            ansiprint(line, fg=31, i=True)
+            continue
+        if line.startswith('@@'):
+            ansiprint(line, fg=35, i=True)
+            continue
+        print(line)
 
 
 def main(argv):
@@ -165,7 +186,7 @@ def main(argv):
                     proc = subprocess.Popen(args, stdout=subprocess.PIPE,
                                             stderr=subprocess.PIPE)
                     out, _ = proc.communicate()
-                    print(out.decode('utf-8'))
+                    colordiff(out.decode('utf-8'))
         elif rv == 1 and verbose:
             ansiprint(sm.format(src, dest), fg=32)
 
