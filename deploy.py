@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # vim:fileencoding=utf-8
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
@@ -11,13 +11,12 @@
 
 """Script to check which files need to be installed."""
 
-from __future__ import division, print_function
-import sys
-import os
-import pwd
-import platform
-import subprocess
 from shutil import copyfile
+import os
+import platform
+import pwd
+import subprocess
+import sys
 
 __version__ = '$Revision$'[11:-2]
 
@@ -77,18 +76,21 @@ def compare(src, dest):
     return 0
 
 
-def ansiprint(s, fg='', bg=''):
+def ansiprint(s, fg='', bg='', i=False):
     """Prints a text with ansi colors.
 
     :param fg: optional foreground color
     :param fg: optional background color
     """
-    esc = '\033[{:d}m'
+    esc = '\033[{:d}{}m'
+    iv=''
+    if i:
+        iv=";1"
     if fg:
-        fg = esc.format(fg)
+        fg = esc.format(fg, iv)
     if bg:
-        bg = esc.format(bg)
-    print(''.join([fg, bg, s, esc.format(0)]))
+        bg = esc.format(bg, iv)
+    print(''.join([fg, bg, s, esc.format(0, '')]))
 
 
 def do_install(src, perm, dest, cmds, verbose):
@@ -122,16 +124,18 @@ def main(argv):
     ne = "The file '{}' does not exist."
     df = "The file '{}' differs from '{}'."
     sm = "The files '{}' and '{}' are the same."
-    if '-h' in argv:
-        print('Usage: {} [-h][-d|-i][-v]'.format(argv[0]))
+    diffs = 'diff' in argv
+    verbose = '-v' in argv
+    install = 'install' in argv
+    command = diffs or install or 'check' in argv
+    if '-h' in argv or not command:
+        print('Usage: {} [check|diff|install][-v][-h]'.format(argv[0]))
         print('-h: help')
-        print('-d: print the diff(1) output for different files')
-        print('-i: install files')
+        print('check: generate a list of files that need installing')
+        print('diff: print the diff(1) output for different files')
+        print('install: install files')
         print('-v: verbose; report if files are the same')
         sys.exit(0)
-    diffs = '-d' in argv
-    verbose = '-v' in argv
-    install = '-i' in argv
     if install:
         diffs = False
     fname = '.'.join(['filelist', pwd.getpwuid(os.getuid())[0]])
@@ -154,7 +158,7 @@ def main(argv):
             if install:
                 do_install(src, perm, dest, cmds, True)
             else:
-                ansiprint(df.format(src, dest), fg=31)
+                ansiprint(df.format(src, dest), fg=31, i=True)
                 if diffs:
                     args = ['diff', '-u', '-d', dest, src]
                     # Use Popen because diff can return 1!
