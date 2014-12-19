@@ -28,10 +28,10 @@ How it works
 
 The `deploy` command is meant to be run from a color terminal.
 
-It is meant to be used from the root of e.g. a git repository.
-When started, `deploy` looks for and reads the file named `filelist.$USER` in
-the directory from which `deploy` is run. So for a user named “jdoe” it would
-look for a file `filelist.jdoe`.
+It is meant to be used from the root of e.g. a git repository.  When started,
+`deploy` looks for and reads the file named `filelist.$USER` in the directory
+from which `deploy` is run. So when run by a user named “jdoe” it would look
+for a file `filelist.jdoe`.
 
 
 file format
@@ -71,13 +71,71 @@ The ‘deploy’ program has tree sub-commands or modes;
 * *install*: Install the files in their destinations and run the post-install
   commands.
 
+
+Examples
+--------
+
+The file `filelist.jdoe` in a `setup` directory contains the following
+lines among others::
+
+    ../shared/fetchmailrc  400 /home/jdoe/.fetchmailrc
+
+This installs fetchmail's configuration file and makes sure that only the
+owner can read it. Note how a relative path is used for the source, but an
+absolute path is used for the destination.
+
+The following line is an example of using post-install commands::
+
+    Xresources  644  /home/jdoe/.Xresources  xrdb -load /home/jdoe/.Xresources
+
+This reloads the X resources into the X server after installing them.
+
+
 Requirements
 ============
 
-It requires the following programs
-
-* Python 3 (developed and tested with `python3.4`)
-* `diff` (tested with the diff from GNU duffutils)
-* `sha256` (tested with the FreeBSD version)
+The `deploy` program is written for Python 3 (developed and tested with
+`python3.4`). It has no dependencies outside of Python's standard
+library.
 
 
+Installation
+============
+
+UNIX-like operating systems
+---------------------------
+
+This includes Linux, all BSD variants, Apple's OS X.
+
+For a system-wide installation:
+
+* Make sure you don't already *have* an identically named program installed!
+* Copy the `deploy.py` script to a location in your path as `deploy`
+* Make it executable.
+
+For example::
+
+    cp -p deploy.py ~/bin/deploy
+    chmod 755 ~/bin/deploy
+
+If you want to install it locally, just copy it to where you need it and make
+it executable.
+
+.. Note::
+
+    If your system doesn't have `\usr\bin\env`, or if your Python 3 is not not
+    in your $PATH, modify the first line of the `deploy` program to point to
+    the location of the Python 3 program before installing it.
+
+
+Windows
+-------
+
+Copy `deploy.py` to the `scripts` directory of your Python 3 installation.
+Since I do not use MS windows in my development environment I'm not able to
+give more specific advice.
+
+Instead of the standard `cmd.exe` shell, I would suggest you use e.g. the git
+BASH that comes with `MSYS git`_ distribution.
+
+.. _MSYS git: http://msysgit.github.io/

@@ -12,6 +12,8 @@
 """Script for deploying files. It can check for differences, show diffs and
 install files."""
 
+from difflib import unified_diff
+from hashlib import sha256
 from shutil import copyfile
 import os
 import platform
@@ -80,11 +82,13 @@ def compare(src, dest):
     xdest = os.path.exists(dest)
     if not xdest:
         return 2
-    csrc = subprocess.check_output(['sha256', '-q', src])
+    with open(src, 'rb') as s:
+        csrc = sha256(s.read()).digest()
     if xdest:
-        cdest = subprocess.check_output(['sha256', '-q', dest])
+        with open(dest, 'rb') as d:
+            cdest = sha256(d.read()).digest()
     else:
-        cdest = ''
+        cdest = b''
     if csrc == cdest:
         return 1
     return 0
@@ -95,6 +99,7 @@ def ansiprint(s, fg='', bg='', i=False):
 
     :param fg: optional foreground color
     :param fg: optional background color
+    :param i: boolean to indicate intense colors (default False)
     """
     esc = '\033[{:d}{}m'
     iv = ''
@@ -133,9 +138,10 @@ def do_install(src, perm, dest, cmds, verbose):
 def colordiff(txt):
     """Print a colored diff.
 
-    :param txt: diff text to print
+    :param txt: diff list or generator to print
     """
-    for line in txt.splitlines():
+    for line in txt:
+        line = line.rstrip()
         if line.startswith(('+++ ', '--- ')):
             ansiprint(line, fg=33, i=True)
             continue
@@ -195,12 +201,10 @@ def main(argv):
             else:
                 ansiprint(df.format(src, dest), fg=31, i=True)
                 if diffs:
-                    args = ['diff', '-u', '-d', dest, src]
-                    # Use Popen because diff can return 1!
-                    proc = subprocess.Popen(args, stdout=subprocess.PIPE,
-                                            stderr=subprocess.PIPE)
-                    out, _ = proc.communicate()
-                    colordiff(out.decode('utf-8'))
+                    with open(src) as s, open(dest) as d:
+                        srcl, destl = list(s), list(d)
+                    out = unified_diff(destl, srcl, dest, src)
+                    colordiff(out)
         elif rv == 1 and verbose:
             ansiprint(sm.format(src, dest), fg=32)
 
