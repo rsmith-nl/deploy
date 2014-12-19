@@ -9,7 +9,8 @@
 # related or neighboring rights to deploy.py. This work is published from the
 # Netherlands. See http://creativecommons.org/publicdomain/zero/1.0/
 
-"""Script to check which files need to be installed."""
+"""Script for deploying files. It can check for differences, show diffs and
+install files."""
 
 from shutil import copyfile
 import os
@@ -30,6 +31,10 @@ def parsefilelist(name):
 
     :param name: the name of a file to parse
     :returns: list of (src, perm, dest, commands) tuples
+
+    Doctests:
+    >>> parsefilelist('filelist.rsmith')[0]
+    ('deploy.py', 493, '/home/rsmith/src/scripts/deploy', None)
     """
     with open(name, 'r') as infile:
         lines = infile.readlines()
@@ -63,11 +68,20 @@ def compare(src, dest):
     :param dest: path of the destination file.
     :returns: 0 if src and dest are not the same, 1 if they are,
     2 if dest doesn't exist.
+
+    Doctests:
+    >>> compare('deploy.py', 'deploy.py')
+    1
+    >>> compare('deploy.py', 'filelist.rsmith')
+    0
+    >>> compare('deploy.py', 'foo')
+    2
     """
-    if not os.path.exists(dest):
+    xdest = os.path.exists(dest)
+    if not xdest:
         return 2
     csrc = subprocess.check_output(['sha256', '-q', src])
-    if os.path.exists(dest):
+    if xdest:
         cdest = subprocess.check_output(['sha256', '-q', dest])
     else:
         cdest = ''
@@ -119,7 +133,7 @@ def do_install(src, perm, dest, cmds, verbose):
 def colordiff(txt):
     """Print a colored diff.
 
-    :param txt: test to print
+    :param txt: diff text to print
     """
     for line in txt.splitlines():
         if line.startswith(('+++ ', '--- ')):
