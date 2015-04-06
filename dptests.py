@@ -8,6 +8,8 @@
 
 """Nose tests for deploy.py"""
 
+from shutil import rmtree
+
 from deploy import parsefilelist, compare
 
 
@@ -16,7 +18,12 @@ def test_pfl():
     assert rv[0] == ('deploy.py', 493, '/home/rsmith/src/scripts/deploy',
                      None)
 
+
 def test_compare():
     assert compare('deploy.py', 'deploy.py') == 1
     assert compare('deploy.py', 'filelist.rsmith') == 0
     assert compare('deploy.py', 'foo') == 2
+
+
+def teardown():
+    rmtree('__pycache__')
