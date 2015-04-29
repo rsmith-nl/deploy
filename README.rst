@@ -20,11 +20,16 @@ and view differences between the files in the repository and those in the
 installed location. Additionally I wanted to have the option to run commands
 after a file was installed. I could of course do this with a makefile_ and this
 approach would be extremely flexible, but writing and maintaining such a Makefile
-would be quite cumbersome.
+for every repo would be quite cumbersome.
 
 .. _install: https://www.freebsd.org/cgi/man.cgi?query=install
 .. _makefile: http://en.wikipedia.org/wiki/Make_%28software%29
 
+Initially I developed a couple of perl scripts for this, ``check.pl`` and
+``install.pl``. You can still find these in the ``attic`` subdirectory.
+Later I combined them and expanded them in a single Python
+script called ``deploy.py``. The user-interface was changed to enable
+sub-commands and the ability to color diffs was added.
 
 How it works
 ============
@@ -155,6 +160,13 @@ The ``deploy`` program was written for Python 3 (developed and tested with
 
         from __future__ import print_function
 
+The scripts uses ``/usr/bin/env`` to call ``python3``. Change the first line
+of the scripts if your system doesn't have ``env``.
+
+For running the tests in ``dptests.py``, nose_ is required.
+
+.. _nose: http://somethingaboutorange.com/mrl/projects/nose/
+
 
 Installation
 ============
@@ -184,7 +196,6 @@ it executable.
     If your system doesn't have ``\usr\bin\env``, or if your Python 3 is not
     in your $PATH, modify the first line of the `deploy` program to point to
     the location of the Python 3 program before installing it.
-
 
 Windows
 -------
