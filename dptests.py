@@ -6,7 +6,11 @@
 # $Date$
 # $Revision$
 
-"""Nose tests for deploy.py"""
+"""Nose tests for deploy.py
+
+Run with: ‘nosetests-3.4 -v dptests.py’
+
+"""
 
 from shutil import rmtree
 
