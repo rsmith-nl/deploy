@@ -2,7 +2,7 @@ Managing configuration files with ‘deploy’
 ##########################################
 
 :author: Roland Smith
-:date: 2014-12-28
+:date: 2015-04-29
 :tags: python 3, deploying, installer
 
 
@@ -129,7 +129,7 @@ Below is a usage example;
     -set crypt_use_gpgme = yes
      set crypt_verify_sig = yes
      set pgp_good_sign="^gpgv?: Good signature from "
-     set pgp_sign_as = B37C45E8
+     set pgp_sign_as = E9AF27B1
      set pgp_timeout = 3600
     +set pgp_use_gpg_agent=yes
 
