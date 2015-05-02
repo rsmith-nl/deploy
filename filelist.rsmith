@@ -1,3 +1,2 @@
 slackbox.erewhon.home rfs.erewhon.home
-deploy.py    755 /home/rsmith/src/scripts/deploy
-deploy.py    755 /home/rsmith/setup/deploy
+deploy.py    755 /home/rsmith/bin/deploy
