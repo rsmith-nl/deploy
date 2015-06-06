@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Modified: $Date$
+# Last modified: 2015-06-06 18:50:04 +0200
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -25,9 +25,11 @@ __version__ = '$Revision$'[11:-2]
 
 
 def main(argv):
-    """Entry point for the check script.
+    """
+    Entry point for the deploy script.
 
-    :param argv: command line arguments
+    Arguments:
+        argv: All command line arguments.
     """
     ne = "The file '{}' does not exist."
     df = "The file '{}' differs from '{}'."
@@ -77,14 +79,18 @@ def main(argv):
 
 
 def parsefilelist(name):
-    """Parse a install file list.
+    """
+    Parse a install file list.
 
     An install file list should have the FQDN for the hosts on the first
     non-comment line. This should include the string returned by
     platform.node().
 
-    :param name: the name of a file to parse
-    :returns: list of (src, perm, dest, commands) tuples
+    Arguments
+        name: The name of a file to parse.
+
+    Returns:
+        A list of (src, perm, dest, commands) tuples.
     """
     with open(name, 'r') as infile:
         lines = infile.readlines()
@@ -112,12 +118,17 @@ def parsefilelist(name):
 
 
 def compare(src, dest):
-    """Compare two files.
+    """
+    Compare two files.
 
-    :param src: path of the source file.
-    :param dest: path of the destination file.
-    :returns: 0 if src and dest are not the same, 1 if they are,
-    2 if dest doesn't exist.
+    Arguments
+        src: Path of the source file.
+        dest: Path of the destination file.
+
+    Returns:
+        0 if src and dest are not the same,
+        1 if they are,
+        2 if dest doesn't exist.
     """
     xdest = os.path.exists(dest)
     if not xdest:
@@ -135,11 +146,13 @@ def compare(src, dest):
 
 
 def ansiprint(s, fg='', bg='', i=False):
-    """Prints a text with ansi colors.
+    """
+    Prints a colored text with ansi escape sequences.
 
-    :param fg: optional foreground color
-    :param fg: optional background color
-    :param i: boolean to indicate intense colors (default False)
+    Arguments
+        fg: Optional foreground color.
+        bg: Optional background color.
+        i: Boolean to indicate intense colors (default False)
     """
     esc = '\033[{:d}{}m'
     iv = ''
@@ -153,13 +166,15 @@ def ansiprint(s, fg='', bg='', i=False):
 
 
 def do_install(src, perm, dest, cmds, verbose):
-    """Install src into dest and execute post-install commands.
+    """
+    Install src into dest and execute post-install commands.
 
-    :param src: location of the source file
-    :param perm: permissions of the destination file
-    :param dest: location of the destination file
-    :param cmds: post-install commands
-    :param verbose: report on successful installs.
+    Arguments
+        src: Location of the source file.
+        perm: Permissions of the destination file.
+        dest: Location of the destination file.
+        cmds: Post-install commands.
+        verbose: Report on successful installs.
     """
     try:
         copyfile(src, dest)
@@ -176,9 +191,11 @@ def do_install(src, perm, dest, cmds, verbose):
 
 
 def colordiff(txt):
-    """Print a colored diff.
+    """
+    Print a colored diff.
 
-    :param txt: diff list or generator to print
+    Arguments:
+        txt: diff list or generator to print
     """
     for line in txt:
         line = line.rstrip()
