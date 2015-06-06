@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2015-06-06 22:20:43 +0200
+# Last modified: 2015-06-06 22:26:42 +0200
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -68,7 +68,9 @@ def main(argv):
                 do_install(src, perm, dest, cmds, True)
             else:
                 ansiprint(ne.format(dest), fg=30, bg=41)
-        if rv == 0:
+        elif rv == 3:
+            ansiprint(ne.format(src), fg=30, bg=41)
+        elif rv == 0:
             if install:
                 do_install(src, perm, dest, cmds, True)
             else:
@@ -132,11 +134,14 @@ def compare(src, dest):
     Returns:
         0 if src and dest are not the same,
         1 if they are,
-        2 if dest doesn't exist.
+        2 if dest doesn't exist,
+        3 if src doesn't exist.
     """
-    xdest = os.path.exists(dest)
+    xsrc, xdest = os.path.exists(src), os.path.exists(dest)
     if not xdest:
         return 2
+    if not xsrc:
+        return 3
     with open(src, 'rb') as s:
         csrc = sha256(s.read()).digest()
     if xdest:
