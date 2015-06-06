@@ -24,6 +24,58 @@ import sys
 __version__ = '$Revision$'[11:-2]
 
 
+def main(argv):
+    """Entry point for the check script.
+
+    :param argv: command line arguments
+    """
+    ne = "The file '{}' does not exist."
+    df = "The file '{}' differs from '{}'."
+    sm = "The files '{}' and '{}' are the same."
+    diffs = 'diff' in argv
+    verbose = '-v' in argv
+    install = 'install' in argv
+    command = diffs or install or 'check' in argv
+    if '-h' in argv or not command:
+        print('Usage: {} [check|diff|install][-v][-h]'.format(argv[0]))
+        print('-h: help')
+        print('check: generate a list of files that need installing')
+        print('diff: print the diff(1) output for different files')
+        print('install: install files')
+        print('-v: verbose; report if files are the same')
+        sys.exit(0)
+    if install:
+        diffs = False
+    fname = '.'.join(['filelist', pwd.getpwuid(os.getuid())[0]])
+    try:
+        installs = parsefilelist(fname)
+    except IOError as e:
+        print(e)
+        sys.exit(1)
+    except ValueError as e:
+        print(e)
+        sys.exit(2)
+    for src, perm, dest, cmds in installs:
+        rv = compare(src, dest)
+        if rv == 2:
+            if install:
+                do_install(src, perm, dest, cmds, True)
+            else:
+                ansiprint(ne.format(dest), fg=30, bg=41)
+        if rv == 0:
+            if install:
+                do_install(src, perm, dest, cmds, True)
+            else:
+                ansiprint(df.format(src, dest), fg=31, i=True)
+                if diffs:
+                    with open(src) as s, open(dest) as d:
+                        srcl, destl = list(s), list(d)
+                    out = unified_diff(destl, srcl, dest, src)
+                    colordiff(out)
+        elif rv == 1 and verbose:
+            ansiprint(sm.format(src, dest), fg=32)
+
+
 def parsefilelist(name):
     """Parse a install file list.
 
@@ -143,58 +195,6 @@ def colordiff(txt):
             ansiprint(line, fg=35, i=True)
             continue
         print(line)
-
-
-def main(argv):
-    """Entry point for the check script.
-
-    :param argv: command line arguments
-    """
-    ne = "The file '{}' does not exist."
-    df = "The file '{}' differs from '{}'."
-    sm = "The files '{}' and '{}' are the same."
-    diffs = 'diff' in argv
-    verbose = '-v' in argv
-    install = 'install' in argv
-    command = diffs or install or 'check' in argv
-    if '-h' in argv or not command:
-        print('Usage: {} [check|diff|install][-v][-h]'.format(argv[0]))
-        print('-h: help')
-        print('check: generate a list of files that need installing')
-        print('diff: print the diff(1) output for different files')
-        print('install: install files')
-        print('-v: verbose; report if files are the same')
-        sys.exit(0)
-    if install:
-        diffs = False
-    fname = '.'.join(['filelist', pwd.getpwuid(os.getuid())[0]])
-    try:
-        installs = parsefilelist(fname)
-    except IOError as e:
-        print(e)
-        sys.exit(1)
-    except ValueError as e:
-        print(e)
-        sys.exit(2)
-    for src, perm, dest, cmds in installs:
-        rv = compare(src, dest)
-        if rv == 2:
-            if install:
-                do_install(src, perm, dest, cmds, True)
-            else:
-                ansiprint(ne.format(dest), fg=30, bg=41)
-        if rv == 0:
-            if install:
-                do_install(src, perm, dest, cmds, True)
-            else:
-                ansiprint(df.format(src, dest), fg=31, i=True)
-                if diffs:
-                    with open(src) as s, open(dest) as d:
-                        srcl, destl = list(s), list(d)
-                    out = unified_diff(destl, srcl, dest, src)
-                    colordiff(out)
-        elif rv == 1 and verbose:
-            ansiprint(sm.format(src, dest), fg=32)
 
 
 if __name__ == '__main__':
