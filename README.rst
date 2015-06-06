@@ -2,8 +2,27 @@ Managing configuration files with ‘deploy’
 ##########################################
 
 :author: Roland Smith
-:date: 2015-04-29
+:date: 2015-06-06
 :tags: python 3, deploying, installer
+
+Classification
+==============
+
+The following `PyPI classifiers`_ apply:
+
+* Development Status :: 5 - Production/Stable
+* Environment :: Console
+* Intended Audience :: Developers
+* Intended Audience :: System Administrators
+* License :: Public Domain
+* Natural Language :: English
+* Operating System :: POSIX
+* Programming Language :: Python :: 3
+* Topic :: System :: Installation/Setup
+* Topic :: System :: Systems Administration
+* Topic :: Utilities
+
+.. _PyPI classifiers: https://pypi.python.org/pypi?%3Aaction=list_classifiers
 
 
 History
@@ -30,6 +49,7 @@ Initially I developed a couple of perl scripts for this, ``check.pl`` and
 Later I combined them and expanded them in a single Python
 script called ``deploy.py``. The user-interface was changed to enable
 sub-commands and the ability to color diffs was added.
+
 
 How it works
 ============
@@ -181,6 +201,6 @@ Removing the program can be done by running
 
 .. code-block:: console
 
-    # make install
+    # make uninstall
 
-Deploy has *not* been tested on ms-windows. 
+Deploy has *not* been tested on ms-windows.
