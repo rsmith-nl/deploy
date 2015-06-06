@@ -151,18 +151,6 @@ Requirements
 The ``deploy`` program was written for Python 3 (developed and tested with
 ``python3.4``). It has no dependencies outside of Python's standard library.
 
-.. Note::
-
-    The script should be compatible with both Python 2 and Python 3. But it
-    uses the latter by default. Change the first line of the script if you want to
-    use Python 2. In that case you should also add the following line to the
-    script::
-
-        from __future__ import print_function
-
-The scripts uses ``/usr/bin/env`` to call ``python3``. Change the first line
-of the scripts if your system doesn't have ``env``.
-
 For running the tests in ``dptests.py``, nose_ is required.
 
 .. _nose: http://somethingaboutorange.com/mrl/projects/nose/
@@ -171,40 +159,28 @@ For running the tests in ``dptests.py``, nose_ is required.
 Installation
 ============
 
-UNIX-like operating systems
----------------------------
-
-This includes Linux, all BSD variants, Apple's OS X.
-
-For a system-wide installation:
-
-* Make sure you don't already *have* an identically named program installed!
-* Copy the ``deploy.py`` script to a location in your path as ``deploy``
-* Make it executable.
-
-For example
-
-.. code-block:: console
-
-    # install deploy.py /usr/local/bin/deploy
-
-If you want to install it locally, just copy it to where you need it and make
-it executable.
-
 .. Note::
 
     If your system doesn't have ``\usr\bin\env``, or if your Python 3 is not
     in your $PATH, modify the first line of the `deploy` program to point to
-    the location of the Python 3 program before installing it.
+    the location of the Python 3 program *before* installing it.
 
-Windows
--------
+For a system-wide installation:
 
-Copy ``deploy.py`` to the ``scripts`` directory of your Python 3 installation.
-Since I do not use MS windows in my development environment I'm not able to
-give more specific advice.
+* Make sure you don't already have an identically named program installed!
+* Use ``make`` to install the script;
 
-Instead of the standard ``cmd.exe`` shell, I would suggest you use e.g. the git
-BASH that comes with `MSYS git`_ distribution.
+.. code-block:: console
 
-.. _MSYS git: http://msysgit.github.io/
+    # make install
+
+If you want to install it locally, just copy it to where you need it and make
+it executable.
+
+Removing the program can be done by running
+
+.. code-block:: console
+
+    # make install
+
+Deploy has *not* been tested on ms-windows. 

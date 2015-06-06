@@ -1,4 +1,6 @@
 __pycache__
 *.pyc
 *.pyo
+build/
+dist/
 README.html
