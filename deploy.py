@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2015-06-07 00:42:22 +0200
+# Last modified: 2015-06-07 00:45:28 +0200
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -23,7 +23,7 @@ import pwd
 import subprocess
 import sys
 
-__version__ = '$Revision$'[11:-2]
+__version__ = '0.9.0'
 
 
 def main(argv):
@@ -58,7 +58,7 @@ def main(argv):
         diffs = False
     if args.verbose:
         diffs = True
-    ne = "The file '{}' does not exist."
+    ne = "The {} file '{}' does not exist."
     df = "The file '{}' differs from '{}'."
     sm = "The files '{}' and '{}' are the same."
     for src, perm, dest, cmds in installs:
@@ -67,9 +67,9 @@ def main(argv):
             if install:
                 do_install(src, perm, dest, cmds, True)
             else:
-                ansiprint(ne.format(dest), fg=30, bg=41)
+                ansiprint(ne.format('destination', dest), fg=30, bg=41)
         elif rv == 3:
-            ansiprint(ne.format(src), fg=30, bg=41)
+            ansiprint(ne.format('source', src), fg=30, bg=41)
         elif rv == 0:
             if install:
                 do_install(src, perm, dest, cmds, True)
