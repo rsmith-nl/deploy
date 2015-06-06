@@ -3,18 +3,20 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2015-06-06 18:50:04 +0200
+# Last modified: 2015-06-06 22:20:43 +0200
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
 # Netherlands. See http://creativecommons.org/publicdomain/zero/1.0/
 
 """Script for deploying files. It can check for differences, show diffs and
-install files."""
+install files. It will only work if a file named 'filelist.<name>' is
+present, where <name> is the login name of the user."""
 
 from difflib import unified_diff
 from hashlib import sha256
 from shutil import copyfile
+import argparse
 import os
 import platform
 import pwd
@@ -29,34 +31,36 @@ def main(argv):
     Entry point for the deploy script.
 
     Arguments:
-        argv: All command line arguments.
+        argv: All command line arguments save the name of the script.
     """
-    ne = "The file '{}' does not exist."
-    df = "The file '{}' differs from '{}'."
-    sm = "The files '{}' and '{}' are the same."
-    diffs = 'diff' in argv
-    verbose = '-v' in argv
-    install = 'install' in argv
-    command = diffs or install or 'check' in argv
-    if '-h' in argv or not command:
-        print('Usage: {} [check|diff|install][-v][-h]'.format(argv[0]))
-        print('-h: help')
-        print('check: generate a list of files that need installing')
-        print('diff: print the diff(1) output for different files')
-        print('install: install files')
-        print('-v: verbose; report if files are the same')
-        sys.exit(0)
-    if install:
-        diffs = False
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='also report if files are the same')
+    parser.add_argument('-V', '--version', action='version',
+                        version=__version__)
+    parser.add_argument('command', choices=['check', 'diff', 'install'])
     fname = '.'.join(['filelist', pwd.getpwuid(os.getuid())[0]])
     try:
         installs = parsefilelist(fname)
     except IOError as e:
         print(e)
+        parser.print_help()
         sys.exit(1)
     except ValueError as e:
         print(e)
+        parser.print_help()
         sys.exit(2)
+    args = parser.parse_args(argv)
+    install = False
+    diffs = False
+    if args.command == 'install':
+        install = True
+        diffs = False
+    if args.verbose:
+        diffs = True
+    ne = "The file '{}' does not exist."
+    df = "The file '{}' differs from '{}'."
+    sm = "The files '{}' and '{}' are the same."
     for src, perm, dest, cmds in installs:
         rv = compare(src, dest)
         if rv == 2:
@@ -74,7 +78,7 @@ def main(argv):
                         srcl, destl = list(s), list(d)
                     out = unified_diff(destl, srcl, dest, src)
                     colordiff(out)
-        elif rv == 1 and verbose:
+        elif rv == 1 and args.verbose:
             ansiprint(sm.format(src, dest), fg=32)
 
 
@@ -215,4 +219,4 @@ def colordiff(txt):
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main(sys.argv[1:])
