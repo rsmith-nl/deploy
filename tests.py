@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2015-04-05 23:17:04 +0200
-# Last modified: 2015-06-07 00:39:53 +0200
+# Last modified: 2015-06-07 00:41:36 +0200
 
 """Nose tests for deploy.py
 
@@ -24,7 +24,7 @@ from deploy import parsefilelist, compare
 
 def test_compare():
     assert compare('deploy.py', 'deploy.py') == 1
-    assert compare('deploy.py', 'filelist.rsmith') == 0
+    assert compare('deploy.py', 'tests.py') == 0
     assert compare('deploy.py', 'foo') == 2
     assert compare('bar', 'foo') == 3
 

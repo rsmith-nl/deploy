@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2015-06-06 22:26:42 +0200
+# Last modified: 2015-06-07 00:42:22 +0200
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -138,10 +138,10 @@ def compare(src, dest):
         3 if src doesn't exist.
     """
     xsrc, xdest = os.path.exists(src), os.path.exists(dest)
-    if not xdest:
-        return 2
     if not xsrc:
         return 3
+    if not xdest:
+        return 2
     with open(src, 'rb') as s:
         csrc = sha256(s.read()).digest()
     if xdest:
