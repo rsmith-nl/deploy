@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2015-06-07 00:45:28 +0200
+# Last modified: 2015-06-07 15:13:07 +0200
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -23,7 +23,7 @@ import pwd
 import subprocess
 import sys
 
-__version__ = '0.9.0'
+__version__ = '0.9.1'
 
 
 def main(argv):
@@ -55,8 +55,7 @@ def main(argv):
     diffs = False
     if args.command == 'install':
         install = True
-        diffs = False
-    if args.verbose:
+    if args.verbose or args.command == 'diff':
         diffs = True
     ne = "The {} file '{}' does not exist."
     df = "The file '{}' differs from '{}'."
