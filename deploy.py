@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2015-06-07 15:13:07 +0200
+# Last modified: 2016-03-12 11:29:56 +0100
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -20,10 +20,11 @@ import argparse
 import os
 import platform
 import pwd
+import stat
 import subprocess
 import sys
 
-__version__ = '0.9.1'
+__version__ = '0.10.0'
 
 
 def main(argv):
@@ -185,6 +186,7 @@ def do_install(src, perm, dest, cmds, verbose):
         verbose: Report on successful installs.
     """
     try:
+        os.chmod(dest, stat.S_IRUSR | stat.S_IRWXU)
         copyfile(src, dest)
         os.chmod(dest, perm)
         if cmds and subprocess.call(cmds) is not 0:
@@ -193,6 +195,7 @@ def do_install(src, perm, dest, cmds, verbose):
     except Exception as e:
         s = "Installing '{}' as '{}' failed: {}".format(src, dest, e)
         ansiprint(s, fg=31)
+        return
     if verbose:
         s = "File '{}' was successfully installed as '{}'.".format(src, dest)
         ansiprint(s, fg=32)
