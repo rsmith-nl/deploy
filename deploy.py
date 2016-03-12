@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2016-03-12 12:46:27 +0100
+# Last modified: 2016-03-12 12:50:22 +0100
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -24,7 +24,7 @@ import stat
 import subprocess
 import sys
 
-__version__ = '0.10.1'
+__version__ = '0.11.0'
 
 
 def main(argv):
@@ -41,6 +41,13 @@ def main(argv):
                         version=__version__)
     parser.add_argument('command', choices=['check', 'diff', 'install'])
     fname = '.'.join(['filelist', pwd.getpwuid(os.getuid())[0]])
+    args = parser.parse_args(argv)
+    install = False
+    diffs = False
+    if args.command == 'install':
+        install = True
+    if args.verbose or args.command == 'diff':
+        diffs = True
     try:
         installs = parsefilelist(fname)
     except IOError as e:
@@ -51,13 +58,6 @@ def main(argv):
         print(e)
         parser.print_help()
         sys.exit(2)
-    args = parser.parse_args(argv)
-    install = False
-    diffs = False
-    if args.command == 'install':
-        install = True
-    if args.verbose or args.command == 'diff':
-        diffs = True
     install_work(installs, install, diffs, args.verbose)
 
 
