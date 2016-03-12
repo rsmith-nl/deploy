@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2016-03-12 11:29:56 +0100
+# Last modified: 2016-03-12 12:46:27 +0100
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -24,7 +24,7 @@ import stat
 import subprocess
 import sys
 
-__version__ = '0.10.0'
+__version__ = '0.10.1'
 
 
 def main(argv):
@@ -58,30 +58,43 @@ def main(argv):
         install = True
     if args.verbose or args.command == 'diff':
         diffs = True
+    install_work(installs, install, diffs, args.verbose)
+
+
+def install_work(install_data, install, diffs, verbose):
+    """
+    Do the actual installation work.
+
+    Arguments:
+        install_data: A list of (src, perm, dest, commands) tuples.
+        install: Boolean to indicate if files should actually be installed.
+        diffs: Boolean to indicate if diffs should be printer.
+        verbose: Boolean to indicate if extra information should be printed.
+    """
     ne = "The {} file '{}' does not exist."
     df = "The file '{}' differs from '{}'."
     sm = "The files '{}' and '{}' are the same."
-    for src, perm, dest, cmds in installs:
+    for src, perm, dest, cmds in install_data:
         rv = compare(src, dest)
-        if rv == 2:
+        if rv == 1:
             if install:
                 do_install(src, perm, dest, cmds, True)
             else:
-                ansiprint(ne.format('destination', dest), fg=30, bg=41)
-        elif rv == 3:
-            ansiprint(ne.format('source', src), fg=30, bg=41)
-        elif rv == 0:
+                ansiprint(ne.format('destination', dest), fg=29, bg=41)
+        elif rv == 2:
+            ansiprint(ne.format('source', src), fg=29, bg=41)
+        elif rv == -1:
             if install:
                 do_install(src, perm, dest, cmds, True)
             else:
-                ansiprint(df.format(src, dest), fg=31, i=True)
+                ansiprint(df.format(src, dest), fg=30, i=True)
                 if diffs:
                     with open(src) as s, open(dest) as d:
                         srcl, destl = list(s), list(d)
                     out = unified_diff(destl, srcl, dest, src)
                     colordiff(out)
-        elif rv == 1 and args.verbose:
-            ansiprint(sm.format(src, dest), fg=32)
+        elif rv == 0 and verbose:
+            ansiprint(sm.format(src, dest), fg=31)
 
 
 def parsefilelist(name):
@@ -186,7 +199,7 @@ def do_install(src, perm, dest, cmds, verbose):
         verbose: Report on successful installs.
     """
     try:
-        os.chmod(dest, stat.S_IRUSR | stat.S_IRWXU)
+        os.chmod(dest, stat.S_IRUSR | stat.S_IWUSR)
         copyfile(src, dest)
         os.chmod(dest, perm)
         if cmds and subprocess.call(cmds) is not 0:
