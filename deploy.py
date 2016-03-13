@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2016-03-12 12:50:22 +0100
+# Last modified: 2016-03-13 12:26:34 +0100
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -76,25 +76,25 @@ def install_work(install_data, install, diffs, verbose):
     sm = "The files '{}' and '{}' are the same."
     for src, perm, dest, cmds in install_data:
         rv = compare(src, dest)
-        if rv == 1:
+        if rv == 2:
             if install:
                 do_install(src, perm, dest, cmds, True)
             else:
-                ansiprint(ne.format('destination', dest), fg=29, bg=41)
-        elif rv == 2:
-            ansiprint(ne.format('source', src), fg=29, bg=41)
-        elif rv == -1:
+                ansiprint(ne.format('destination', dest), fg=30, bg=41)
+        elif rv == 3:
+            ansiprint(ne.format('source', src), fg=30, bg=41)
+        elif rv == 0:
             if install:
                 do_install(src, perm, dest, cmds, True)
             else:
-                ansiprint(df.format(src, dest), fg=30, i=True)
+                ansiprint(df.format(src, dest), fg=31, i=True)
                 if diffs:
                     with open(src) as s, open(dest) as d:
                         srcl, destl = list(s), list(d)
                     out = unified_diff(destl, srcl, dest, src)
                     colordiff(out)
         elif rv == 0 and verbose:
-            ansiprint(sm.format(src, dest), fg=31)
+            ansiprint(sm.format(src, dest), fg=32)
 
 
 def parsefilelist(name):
