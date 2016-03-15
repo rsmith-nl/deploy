@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2016-03-13 12:44:05 +0100
+# Last modified: 2016-03-15 22:22:49 +0100
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -16,6 +16,7 @@ present, where <name> is the login name of the user."""
 from difflib import unified_diff
 from hashlib import sha256
 from shutil import copyfile
+from enum import IntEnum
 import argparse
 import os
 import platform
@@ -24,7 +25,28 @@ import stat
 import subprocess
 import sys
 
-__version__ = '0.12.0'
+__version__ = '0.13.0'
+ne = "The {} file '{}' does not exist."
+
+
+# Standard ANSI colors
+class Color(IntEnum):
+    black = 0
+    red = 1
+    green = 2
+    yellow = 3
+    blue = 4
+    magenta = 5
+    cyan = 6
+    white = 7
+
+
+# File comparison result
+class Cmp(IntEnum):
+    differ = 0  # source and destination are different
+    same = 1  # source and destination are identical
+    nodest = 2  # destination doesn't exist
+    nosrc = 3  # source doesn't exist
 
 
 def main(argv):
@@ -42,14 +64,16 @@ def main(argv):
     parser.add_argument('command', choices=['check', 'diff', 'install'])
     fname = '.'.join(['filelist', pwd.getpwuid(os.getuid())[0]])
     args = parser.parse_args(argv)
-    install = False
-    diffs = False
+    fn = check
+    verbose = False
     if args.command == 'install':
-        install = True
-    if args.verbose or args.command == 'diff':
-        diffs = True
+        fn = install
+    elif args.command == 'diff':
+        fn = diff
+    if args.verbose:
+        verbose = True
     try:
-        installs = parsefilelist(fname)
+        install_data = parsefilelist(fname)
     except IOError as e:
         print(e)
         parser.print_help()
@@ -58,43 +82,9 @@ def main(argv):
         print(e)
         parser.print_help()
         sys.exit(2)
-    install_work(installs, install, diffs, args.verbose)
-
-
-def install_work(install_data, install, diffs, verbose):
-    """
-    Do the actual installation work.
-
-    Arguments:
-        install_data: A list of (src, perm, dest, commands) tuples.
-        install: Boolean to indicate if files should actually be installed.
-        diffs: Boolean to indicate if diffs should be printer.
-        verbose: Boolean to indicate if extra information should be printed.
-    """
-    ne = "The {} file '{}' does not exist."
-    df = "The file '{}' differs from '{}'."
-    sm = "The files '{}' and '{}' are the same."
     for src, perm, dest, cmds in install_data:
-        rv = compare(src, dest)
-        if rv == 2:
-            if install:
-                do_install(src, perm, dest, cmds, True)
-            else:
-                ansiprint(ne.format('destination', dest), fg=30, bg=41)
-        elif rv == 3:
-            ansiprint(ne.format('source', src), fg=30, bg=41)
-        elif rv == 0:
-            if install:
-                do_install(src, perm, dest, cmds, True)
-            else:
-                ansiprint(df.format(src, dest), fg=31, i=True)
-                if diffs:
-                    with open(src) as s, open(dest) as d:
-                        srcl, destl = list(s), list(d)
-                    out = unified_diff(destl, srcl, dest, src)
-                    colordiff(out)
-        elif rv == 0 and verbose:
-            ansiprint(sm.format(src, dest), fg=32)
+        cv = compare(src, dest)
+        fn(src, perm, dest, cmds, cv, verbose)
 
 
 def parsefilelist(name):
@@ -145,16 +135,13 @@ def compare(src, dest):
         dest: Path of the destination file.
 
     Returns:
-        0 if src and dest are not the same,
-        1 if they are,
-        2 if dest doesn't exist,
-        3 if src doesn't exist.
+        Cmp enum
     """
     xsrc, xdest = os.path.exists(src), os.path.exists(dest)
     if not xsrc:
-        return 3
+        return Cmp.nosrc
     if not xdest:
-        return 2
+        return Cmp.nodest
     with open(src, 'rb') as s:
         csrc = sha256(s.read()).digest()
     if xdest:
@@ -163,8 +150,8 @@ def compare(src, dest):
     else:
         cdest = b''
     if csrc == cdest:
-        return 1
-    return 0
+        return Cmp.same
+    return Cmp.differ
 
 
 def ansiprint(s, fg='', bg='', i=False):
@@ -180,39 +167,11 @@ def ansiprint(s, fg='', bg='', i=False):
     iv = ''
     if i:
         iv = ";1"
-    if fg:
-        fg = esc.format(fg, iv)
-    if bg:
-        bg = esc.format(bg, iv)
+    if fg != '':
+        fg = esc.format(30+fg, iv)
+    if bg != '':
+        bg = esc.format(40+bg, iv)
     print(''.join([fg, bg, s, esc.format(0, '')]))
-
-
-def do_install(src, perm, dest, cmds, verbose):
-    """
-    Install src into dest and execute post-install commands.
-
-    Arguments
-        src: Location of the source file.
-        perm: Permissions of the destination file.
-        dest: Location of the destination file.
-        cmds: Post-install commands.
-        verbose: Report on successful installs.
-    """
-    try:
-        if os.path.exists(dest):
-            os.chmod(dest, stat.S_IRUSR | stat.S_IWUSR)
-        copyfile(src, dest)
-        os.chmod(dest, perm)
-        if cmds and subprocess.call(cmds) is not 0:
-            s = 'Post-install commands for {} failed.'.format(dest)
-            ansiprint(s, fg=31)
-    except Exception as e:
-        s = "Installing '{}' as '{}' failed: {}".format(src, dest, e)
-        ansiprint(s, fg=31)
-        return
-    if verbose:
-        s = "File '{}' was successfully installed as '{}'.".format(src, dest)
-        ansiprint(s, fg=32)
 
 
 def colordiff(txt):
@@ -225,18 +184,94 @@ def colordiff(txt):
     for line in txt:
         line = line.rstrip()
         if line.startswith(('+++ ', '--- ')):
-            ansiprint(line, fg=33, i=True)
+            ansiprint(line, fg=Color.yellow, i=True)
             continue
         if line.startswith('+'):
-            ansiprint(line, fg=32, i=True)
+            ansiprint(line, fg=Color.green, i=True)
             continue
         if line.startswith('-'):
-            ansiprint(line, fg=31, i=True)
+            ansiprint(line, fg=Color.red, i=True)
             continue
         if line.startswith('@@'):
-            ansiprint(line, fg=35, i=True)
+            ansiprint(line, fg=Color.magenta, i=True)
             continue
         print(line)
+
+
+def check(src, perm, dest, cmds, comp, verbose=False):
+    """
+    Report if src and dest are different.
+
+    Arguments
+        src: Location of the source file.
+        perm: Permissions of the destination file (ignored).
+        dest: Location of the destination file.
+        cmds: Post-install commands (ignored).
+        comp: Cmp enum
+        verbose: Report if files are the same.
+    """
+    df = "The file '{}' differs from '{}'."
+    sm = "The files '{}' and '{}' are the same."
+    if comp == Cmp.differ:
+        ansiprint(df.format(src, dest), fg=Color.red, i=True)
+    elif comp == Cmp.nodest:
+        ansiprint(ne.format('destination', src), fg=Color.black, bg=Color.red)
+    elif comp == Cmp.nosrc:
+        ansiprint(ne.format('source', src), fg=Color.black, bg=Color.red)
+    elif comp == Cmp.same and verbose:
+        ansiprint(sm.format(src, dest), fg=Color.green)
+
+
+def diff(src, perm, dest, cmds, comp, verbose=False):
+    """
+    Print the difference between src and dest.
+
+    Arguments
+        src: Location of the source file.
+        perm: Permissions of the destination file (ignored).
+        dest: Location of the destination file.
+        cmds: Post-install commands (ignored).
+        cmp: Cmp enum
+        verbose: Report on successful installs (ignored).
+    """
+    if comp != Cmp.differ:
+        return
+    with open(src) as s, open(dest) as d:
+        srcl, destl = list(s), list(d)
+        out = unified_diff(destl, srcl, dest, src)
+        colordiff(out)
+
+
+def install(src, perm, dest, cmds, comp, verbose=False):
+    """
+    Install src into dest and execute post-install commands.
+
+    Arguments
+        src: Location of the source file.
+        perm: Permissions of the destination file.
+        dest: Location of the destination file.
+        cmds: Post-install commands.
+        cmp: Cmp enum
+        verbose: Report on successful installs.
+    """
+    if comp == Cmp.nosrc:
+        ansiprint(ne.format('source', src), fg=Color.black, bg=Color.red)
+    elif comp == Cmp.same:
+        return
+    try:
+        if os.path.exists(dest):
+            os.chmod(dest, stat.S_IRUSR | stat.S_IWUSR)
+        copyfile(src, dest)
+        os.chmod(dest, perm)
+        if cmds and subprocess.call(cmds) is not 0:
+            s = 'Post-install commands for {} failed.'.format(dest)
+            ansiprint(s, fg=Color.red)
+    except Exception as e:
+        s = "Installing '{}' as '{}' failed: {}".format(src, dest, e)
+        ansiprint(s, fg=Color.red)
+        return
+    s = "File '{}' was successfully installed as '{}'."
+    ansiprint(s.format(src, dest), fg=Color.green)
 
 
 if __name__ == '__main__':

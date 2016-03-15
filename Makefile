@@ -18,4 +18,5 @@ uninstall::
 	rm -f ${BINDIR}/deploy
 
 test::
-	nosetests-3.4 -v tests.py
+	nosetests-3.5 -v tests.py
+
