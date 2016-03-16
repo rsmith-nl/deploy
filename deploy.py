@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2016-03-15 22:22:49 +0100
+# Last modified: 2016-03-16 19:35:34 +0100
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -14,9 +14,9 @@ install files. It will only work if a file named 'filelist.<name>' is
 present, where <name> is the login name of the user."""
 
 from difflib import unified_diff
+from enum import IntEnum
 from hashlib import sha256
 from shutil import copyfile
-from enum import IntEnum
 import argparse
 import os
 import platform
