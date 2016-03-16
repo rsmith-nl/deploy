@@ -2,7 +2,7 @@ Managing configuration files with ‘deploy’
 ##########################################
 
 :author: Roland Smith
-:date: 2015-06-06
+:date: 2016-03-16
 :tags: python 3, deploying, installer
 
 Classification
@@ -17,7 +17,8 @@ The following `PyPI classifiers`_ apply:
 * License :: Public Domain
 * Natural Language :: English
 * Operating System :: POSIX
-* Programming Language :: Python :: 3
+* Programming Language :: Python :: 3.4
+* Programming Language :: Python :: 3.5
 * Topic :: System :: Installation/Setup
 * Topic :: System :: Systems Administration
 * Topic :: Utilities
@@ -68,7 +69,7 @@ directory tree owned by ``jdoe``. For installing files system wide (e.g. in
 as the root user.
 
 
-file format
+File format
 -----------
 
 In these file lists, lines that have a ‘#’ as the first non-whitespace
@@ -92,7 +93,7 @@ The other non comment lines all have the same format::
   empty and may contain spaces.
 
 
-commands
+Commands
 --------
 
 The ‘deploy’ program has tree sub-commands or modes;
@@ -168,10 +169,11 @@ Below is a usage example;
 Requirements
 ============
 
-The ``deploy`` program was written for Python 3 (developed and tested with
-``python3.4``). It has no dependencies outside of Python's standard library.
+The ``deploy`` program was written for Python 3.4+ (developed and tested with
+``python3.4`` and currently ``python3.5``). It has no dependencies outside of
+Python's standard library.
 
-For running the tests in ``dptests.py``, nose_ is required.
+For running the tests in ``tests.py``, nose_ is required.
 
 .. _nose: http://somethingaboutorange.com/mrl/projects/nose/
 
@@ -185,7 +187,7 @@ Installation
     in your $PATH, modify the first line of the `deploy` program to point to
     the location of the Python 3 program *before* installing it.
 
-For a system-wide installation:
+For a system-wide installation (UNIX-like systems):
 
 * Make sure you don't already have an identically named program installed!
 * Use ``make`` to install the script;
