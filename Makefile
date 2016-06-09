@@ -1,4 +1,4 @@
-.PHONY: help uninstall test
+.PHONY: help uninstall tests
 
 # Installation locations
 PREFIX=/usr/local
@@ -17,6 +17,6 @@ install: deploy.py
 uninstall::
 	rm -f ${BINDIR}/deploy
 
-test::
-	nosetests-3.5 -v tests.py
+tests::
+	py.test-3.5 -v tests.py
 

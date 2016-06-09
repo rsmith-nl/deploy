@@ -3,17 +3,11 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2015-04-05 23:17:04 +0200
-# Last modified: 2015-06-07 00:41:36 +0200
+# Last modified: 2016-06-09 23:46:30 +0200
 
-"""Nose tests for deploy.py
+"""Nose tests for deploy.py"""
 
-Run with: ‘nosetests-3.4 -v dptests.py’
-
-"""
-
-from shutil import rmtree
-
-from deploy import parsefilelist, compare
+from deploy import compare
 
 
 # def test_pfl():
@@ -27,7 +21,3 @@ def test_compare():
     assert compare('deploy.py', 'tests.py') == 0
     assert compare('deploy.py', 'foo') == 2
     assert compare('bar', 'foo') == 3
-
-
-def teardown():
-    rmtree('__pycache__')

@@ -173,9 +173,9 @@ The ``deploy`` program was written for Python 3.4+ (developed and tested with
 ``python3.4`` and currently ``python3.5``). It has no dependencies outside of
 Python's standard library.
 
-For running the tests in ``tests.py``, nose_ is required.
+For running the tests in ``tests.py``, py.test_ is required.
 
-.. _nose: http://somethingaboutorange.com/mrl/projects/nose/
+.. _py.test: http://pytest.org/latest/
 
 
 Installation
