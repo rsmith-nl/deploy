@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2016-05-05 22:10:44 +0200
+# Last modified: 2016-09-20 21:03:45 +0200
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -25,7 +25,7 @@ import stat
 import subprocess
 import sys
 
-__version__ = '0.14.0'
+__version__ = '0.15.0'
 ne = "The {} file '{}' does not exist."
 
 
@@ -46,7 +46,7 @@ def check(src, perm, dest, cmds, comp, verbose=False):
     if comp == Cmp.differ:
         ansiprint(df.format(src, dest), fg=Color.red, i=True)
     elif comp == Cmp.nodest:
-        ansiprint(ne.format('destination', src), fg=Color.black, bg=Color.red)
+        ansiprint(ne.format('destination', dest), fg=Color.black, bg=Color.red)
     elif comp == Cmp.nosrc:
         ansiprint(ne.format('source', src), fg=Color.black, bg=Color.red)
     elif comp == Cmp.same and verbose:
