@@ -3,15 +3,18 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2016-09-20 21:03:45 +0200
+# Last modified: 2017-06-04 15:20:40 +0200
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
 # Netherlands. See http://creativecommons.org/publicdomain/zero/1.0/
+"""
+Script for deploying files.
 
-"""Script for deploying files. It can check for differences, show diffs and
-install files. It will only work if a file named 'filelist.<name>' is
-present, where <name> is the login name of the user."""
+It can check for differences, show diffs and install files. It will only work if
+a file named 'filelist.<name>' is present, where <name> is the login name of the
+user.
+"""
 
 from difflib import unified_diff
 from enum import IntEnum
@@ -108,8 +111,9 @@ def install(src, perm, dest, cmds, comp, verbose=False):
 cmdset = {'check': check, 'diff': diff, 'install': install}
 
 
-# Standard ANSI colors
 class Color(IntEnum):
+    """Standard ANSI colors."""
+
     black = 0
     red = 1
     green = 2
@@ -120,8 +124,9 @@ class Color(IntEnum):
     white = 7
 
 
-# File comparison result
 class Cmp(IntEnum):
+    """File comparison result."""
+
     differ = 0  # source and destination are different
     same = 1  # source and destination are identical
     nodest = 2  # destination doesn't exist
@@ -231,7 +236,7 @@ def compare(src, dest):
 
 def ansiprint(s, fg='', bg='', i=False):
     """
-    Prints a colored text with ansi escape sequences.
+    Print a colored text with ansi escape sequences.
 
     Arguments
         fg: Optional foreground color.
