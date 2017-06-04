@@ -18,5 +18,5 @@ uninstall::
 	rm -f ${BINDIR}/deploy
 
 tests::
-	py.test-3.5 -v tests.py
+	py.test-3.6 -v tests.py
 

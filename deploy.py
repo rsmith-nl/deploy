@@ -141,10 +141,13 @@ def main(argv):
         argv: All command line arguments save the name of the script.
     """
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='also report if files are the same')
-    parser.add_argument('-V', '--version', action='version',
-                        version=__version__)
+    parser.add_argument(
+        '-v',
+        '--verbose',
+        action='store_true',
+        help='also report if files are the same')
+    parser.add_argument(
+        '-V', '--version', action='version', version=__version__)
     parser.add_argument('command', choices=cmdset.keys())
     fname = '.'.join(['filelist', pwd.getpwuid(os.getuid())[0]])
     args = parser.parse_args(argv)
@@ -248,9 +251,9 @@ def ansiprint(s, fg='', bg='', i=False):
     if i:
         iv = ";1"
     if fg != '':
-        fg = esc.format(30+fg, iv)
+        fg = esc.format(30 + fg, iv)
     if bg != '':
-        bg = esc.format(40+bg, iv)
+        bg = esc.format(40 + bg, iv)
     print(''.join([fg, bg, s, esc.format(0, '')]))
 
 
