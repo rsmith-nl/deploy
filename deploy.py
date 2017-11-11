@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2017-06-04 15:20:40 +0200
+# Last modified: 2017-11-11 19:43:17 +0100
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -28,7 +28,7 @@ import stat
 import subprocess
 import sys
 
-__version__ = '0.15.0'
+__version__ = '1.0'
 ne = "The {} file '{}' does not exist."
 
 

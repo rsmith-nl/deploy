@@ -2,7 +2,7 @@ Managing configuration files with ‘deploy’
 ##########################################
 
 :author: Roland Smith
-:date: 2016-03-16
+:date: 2017-11-11
 :tags: python 3, deploying, installer
 
 Classification
@@ -19,6 +19,7 @@ The following `PyPI classifiers`_ apply:
 * Operating System :: POSIX
 * Programming Language :: Python :: 3.4
 * Programming Language :: Python :: 3.5
+* Programming Language :: Python :: 3.6
 * Topic :: System :: Installation/Setup
 * Topic :: System :: Systems Administration
 * Topic :: Utilities
@@ -170,7 +171,7 @@ Requirements
 ============
 
 The ``deploy`` program was written for Python 3.4+ (developed and tested with
-``python3.4`` and currently ``python3.5``). It has no dependencies outside of
+``python3.4`` and currently ``python3.6``). It has no dependencies outside of
 Python's standard library.
 
 For running the tests in ``tests.py``, py.test_ is required.
