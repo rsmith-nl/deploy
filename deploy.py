@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2017-11-11 19:43:17 +0100
+# Last modified: 2017-12-28 11:41:24 +0100
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -12,8 +12,8 @@
 Script for deploying files.
 
 It can check for differences, show diffs and install files. It will only work if
-a file named 'filelist.<name>' is present, where <name> is the login name of the
-user.
+a file named 'filelist.<host>.<name>' is present, where <host> is the host name
+without domain, and <name> is the login name of the user.
 """
 
 from difflib import unified_diff
@@ -22,13 +22,13 @@ from hashlib import sha256
 from shutil import copyfile
 import argparse
 import os
-import platform
+# import platform
 import pwd
 import stat
 import subprocess
 import sys
 
-__version__ = '1.0'
+__version__ = '2.0'
 ne = "The {} file '{}' does not exist."
 
 
@@ -149,51 +149,39 @@ def main(argv):
     parser.add_argument(
         '-V', '--version', action='version', version=__version__)
     parser.add_argument('command', choices=cmdset.keys())
-    fname = '.'.join(['filelist', pwd.getpwuid(os.getuid())[0]])
     args = parser.parse_args(argv)
     verbose = False
     fn = cmdset[args.command]
     if args.verbose:
         verbose = True
     try:
-        install_data = parsefilelist(fname)
-    except IOError as e:
+        install_data = parsefilelist()
+    except Exception as e:
         print(e)
         parser.print_help()
         sys.exit(1)
-    except ValueError as e:
-        print(e)
-        parser.print_help()
-        sys.exit(2)
     for src, perm, dest, cmds in install_data:
         cv = compare(src, dest)
         fn(src, perm, dest, cmds, cv, verbose)
 
 
-def parsefilelist(name):
+def parsefilelist():
     """
     Parse a install file list.
 
-    An install file list should have the FQDN for the hosts on the first
-    non-comment line. This should include the string returned by
-    platform.node().
-
-    Arguments
-        name: The name of a file to parse.
+    The install file list should have the name “filelist.<hostname>.<user>”,
+    where the hostname is *without* the domain.
 
     Returns:
         A list of (src, perm, dest, commands) tuples.
     """
-    with open(name, 'r') as infile:
+    user = pwd.getpwuid(os.getuid()).pw_name
+    hostname = subprocess.check_output(['hostname', '-s']).decode('utf-8').strip()
+    filename = '.'.join(['filelist', hostname, user])
+    with open(filename, 'r') as infile:
         lines = infile.readlines()
     lines = [ln.strip() for ln in lines]
     lines = [ln for ln in lines if len(ln) and not ln.startswith('#')]
-    hostnames = lines[0]
-    pn = platform.node()
-    if pn not in hostnames:
-        ve = "First line from '{}' doesn't include '{}'".format(name, pn)
-        raise ValueError(ve)
-    lines = lines[1:]
     installs = []
     for ln in lines:
         items = ln.split(None, 3)
