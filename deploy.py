@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2017-12-28 11:41:24 +0100
+# Last modified: 2017-12-28 20:53:50 +0100
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -22,7 +22,6 @@ from hashlib import sha256
 from shutil import copyfile
 import argparse
 import os
-# import platform
 import pwd
 import stat
 import subprocess
@@ -85,7 +84,7 @@ def install(src, perm, dest, cmds, comp, verbose=False):
         perm: Permissions of the destination file.
         dest: Location of the destination file.
         cmds: Post-install commands.
-        cmp: Cmp enum
+        comp: Cmp enum
         verbose: Report on successful installs.
     """
     if comp == Cmp.nosrc:
