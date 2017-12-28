@@ -10,9 +10,8 @@ help::
 	@echo "'make uninstall' to remove the program."
 
 install: deploy.py
-	@mkdir -p ${BINDIR}
-	cp -p deploy.py ${BINDIR}/deploy
-	chmod 755 ${BINDIR}/deploy
+	@install -d ${BINDIR}
+	install deploy.py ${BINDIR}/deploy
 
 uninstall::
 	rm -f ${BINDIR}/deploy
