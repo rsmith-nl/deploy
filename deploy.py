@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2017-12-28 21:08:16 +0100
+# Last modified: 2018-02-18 17:48:49 +0100
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -156,7 +156,7 @@ def main(argv):
     try:
         install_data = parsefilelist()
     except Exception as e:
-        ansiprint(e, fg=Color.red)
+        ansiprint(str(e), fg=Color.red)
         parser.print_help()
         sys.exit(1)
     for src, perm, dest, cmds in install_data:
