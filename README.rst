@@ -2,7 +2,7 @@ Managing configuration files with ‘deploy’
 ##########################################
 
 :author: Roland Smith
-:date: 2017-11-11
+:date: 2018-04-02
 :tags: python 3, deploying, installer
 
 Classification
@@ -102,6 +102,7 @@ The ‘deploy’ program has tree sub-commands or modes;
 * *check*: Generate a list of files that are different from the installed
   files. If the verbose option (``-v``) is used, it lists for all files if they
   need installing or not.
+* *status*: Equivalent to *check* with the ``-v`` option.
 * *diff*: Generate a colored diff between the files in the repository and the
   installed files.
 * *install*: Install the files in their destinations and run the post-install
