@@ -3,7 +3,7 @@
 #
 # Author: R.F. Smith <rsmith@xs4all.nl>
 # Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2018-02-18 17:48:49 +0100
+# Last modified: 2018-04-02 17:44:41 +0200
 #
 # To the extent possible under law, R.F. Smith has waived all copyright and
 # related or neighboring rights to deploy.py. This work is published from the
@@ -27,7 +27,7 @@ import stat
 import subprocess
 import sys
 
-__version__ = '2.0'
+__version__ = '2.1'
 ne = "The {} file '{}' does not exist."
 
 
@@ -53,6 +53,14 @@ def check(src, perm, dest, cmds, comp, verbose=False):
         ansiprint(ne.format('source', src), fg=Color.black, bg=Color.red)
     elif comp == Cmp.same and verbose:
         ansiprint(sm.format(src, dest), fg=Color.green)
+
+
+def status(src, perm, dest, cmds, comp, _):
+    """
+    Report the status for all files.
+    Equivalent to ‘check’ with the verbose option.
+    """
+    check(src, perm, dest, cmds, comp, verbose=True)
 
 
 def diff(src, perm, dest, cmds, comp, verbose=False):
@@ -107,7 +115,7 @@ def install(src, perm, dest, cmds, comp, verbose=False):
     ansiprint(s.format(src, dest), fg=Color.green)
 
 
-cmdset = {'check': check, 'diff': diff, 'install': install}
+cmdset = {'check': check, 'status': status, 'diff': diff, 'install': install}
 
 
 class Color(IntEnum):
