@@ -14,7 +14,7 @@ The following `PyPI classifiers`_ apply:
 * Environment :: Console
 * Intended Audience :: Developers
 * Intended Audience :: System Administrators
-* License :: Public Domain
+* License :: MIT
 * Natural Language :: English
 * Operating System :: POSIX
 * Programming Language :: Python :: 3.4

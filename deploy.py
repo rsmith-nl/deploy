@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-# vim:fileencoding=utf-8
+# file: deploy.py
+# vim:fileencoding=utf-8:fdm=marker:ft=python
 #
-# Author: R.F. Smith <rsmith@xs4all.nl>
-# Created: 2013-11-20 22:08:38 +0100
-# Last modified: 2018-04-02 17:44:41 +0200
-#
-# To the extent possible under law, R.F. Smith has waived all copyright and
-# related or neighboring rights to deploy.py. This work is published from the
-# Netherlands. See http://creativecommons.org/publicdomain/zero/1.0/
+# Copyright © 2018 R.F. Smith <rsmith@xs4all.nl>.
+# SPDX-License-Identifier: MIT
+# Created: 2014-03-09T17:08:09+01:00
+# Last modified: 2018-04-17T00:03:03+0200
 """
 Script for deploying files.
 
