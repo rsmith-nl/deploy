@@ -147,12 +147,9 @@ def main(argv):
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        '-v',
-        '--verbose',
-        action='store_true',
-        help='also report if files are the same')
-    parser.add_argument(
-        '-V', '--version', action='version', version=__version__)
+        '-v', '--verbose', action='store_true', help='also report if files are the same'
+    )
+    parser.add_argument('-V', '--version', action='version', version=__version__)
     parser.add_argument('command', choices=cmdset.keys())
     args = parser.parse_args(argv)
     verbose = False
