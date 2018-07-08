@@ -17,9 +17,8 @@ The following `PyPI classifiers`_ apply:
 * License :: MIT
 * Natural Language :: English
 * Operating System :: POSIX
-* Programming Language :: Python :: 3.4
-* Programming Language :: Python :: 3.5
 * Programming Language :: Python :: 3.6
+* Programming Language :: Python :: 3.7
 * Topic :: System :: Installation/Setup
 * Topic :: System :: Systems Administration
 * Topic :: Utilities
@@ -171,9 +170,8 @@ Below is a usage example;
 Requirements
 ============
 
-The ``deploy`` program was written for Python 3.4+ (developed and tested with
-``python3.4`` and currently ``python3.6``). It has no dependencies outside of
-Python's standard library.
+The ``deploy`` program was written for Python 3.6+ (developed and tested with
+``python3.6``). It has no dependencies outside of Python's standard library.
 
 For running the tests in ``tests.py``, py.test_ is required.
 

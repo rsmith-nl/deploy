@@ -5,7 +5,7 @@
 # Copyright © 2018 R.F. Smith <rsmith@xs4all.nl>.
 # SPDX-License-Identifier: MIT
 # Created: 2014-03-09T17:08:09+01:00
-# Last modified: 2018-04-17T00:03:03+0200
+# Last modified: 2018-07-08T13:24:01+0200
 """
 Script for deploying files.
 
@@ -26,7 +26,6 @@ import subprocess
 import sys
 
 __version__ = '2.1'
-ne = "The {} file '{}' does not exist."
 
 
 def check(src, perm, dest, cmds, comp, verbose=False):
@@ -41,16 +40,14 @@ def check(src, perm, dest, cmds, comp, verbose=False):
         comp: Cmp enum
         verbose: Report if files are the same.
     """
-    df = "The file '{}' differs from '{}'."
-    sm = "The files '{}' and '{}' are the same."
     if comp == Cmp.differ:
-        ansiprint(df.format(src, dest), fg=Color.red, i=True)
+        ansiprint(f"The file '{src}' differs from '{dest}'.", fg=Color.red, i=True)
     elif comp == Cmp.nodest:
-        ansiprint(ne.format('destination', dest), fg=Color.black, bg=Color.red)
+        ansiprint(f"The destination file '{dest}' does not exist", fg=Color.black, bg=Color.red)
     elif comp == Cmp.nosrc:
-        ansiprint(ne.format('source', src), fg=Color.black, bg=Color.red)
+        ansiprint(f"The source file '{src}' does not exist.", fg=Color.black, bg=Color.red)
     elif comp == Cmp.same and verbose:
-        ansiprint(sm.format(src, dest), fg=Color.green)
+        ansiprint(f"The files '{src}' and '{dest}' are the same.", fg=Color.green)
 
 
 def status(src, perm, dest, cmds, comp, _):
@@ -94,7 +91,7 @@ def install(src, perm, dest, cmds, comp, verbose=False):
         verbose: Report on successful installs.
     """
     if comp == Cmp.nosrc:
-        ansiprint(ne.format('source', src), fg=Color.black, bg=Color.red)
+        ansiprint(f"The source file '{src}' does not exist.", fg=Color.black, bg=Color.red)
     elif comp == Cmp.same:
         return
     try:
@@ -103,14 +100,11 @@ def install(src, perm, dest, cmds, comp, verbose=False):
         copyfile(src, dest)
         os.chmod(dest, perm)
         if cmds and subprocess.call(cmds) is not 0:
-            s = 'Post-install commands for {} failed.'.format(dest)
-            ansiprint(s, fg=Color.red)
+            ansiprint(f'Post-install commands for {dest} failed.', fg=Color.red)
     except Exception as e:
-        s = "Installing '{}' as '{}' failed: {}".format(src, dest, e)
-        ansiprint(s, fg=Color.red)
+        ansiprint(f"Installing '{src}' as '{dest}' failed: {e}", fg=Color.red)
         return
-    s = "File '{}' was successfully installed as '{}'."
-    ansiprint(s.format(src, dest), fg=Color.green)
+    ansiprint(f"File '{src}' was successfully installed as '{dest}'.", fg=Color.green)
 
 
 cmdset = {'check': check, 'status': status, 'diff': diff, 'install': install}
