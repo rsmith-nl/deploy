@@ -5,7 +5,7 @@
 # Copyright © 2018 R.F. Smith <rsmith@xs4all.nl>.
 # SPDX-License-Identifier: MIT
 # Created: 2014-03-09T17:08:09+01:00
-# Last modified: 2020-08-01T22:58:55+0200
+# Last modified: 2020-08-02T11:10:32+0200
 """
 Script for deploying files.
 
@@ -43,9 +43,13 @@ def check(src, perm, dest, cmds, comp, verbose=False):
     if comp == Cmp.differ:
         ansiprint(f"The file '{src}' differs from '{dest}'.", fg=Color.red, i=True)
     elif comp == Cmp.nodest:
-        ansiprint(f"The destination file '{dest}' does not exist", fg=Color.black, bg=Color.red)
+        ansiprint(
+            f"The destination file '{dest}' does not exist", fg=Color.black, bg=Color.red
+        )
     elif comp == Cmp.nosrc:
-        ansiprint(f"The source file '{src}' does not exist.", fg=Color.black, bg=Color.red)
+        ansiprint(
+            f"The source file '{src}' does not exist.", fg=Color.black, bg=Color.red
+        )
     elif comp == Cmp.same and verbose:
         ansiprint(f"The files '{src}' and '{dest}' are the same.", fg=Color.green)
 
@@ -91,7 +95,9 @@ def install(src, perm, dest, cmds, comp, verbose=False):
         verbose: Report on successful installs.
     """
     if comp == Cmp.nosrc:
-        ansiprint(f"The source file '{src}' does not exist.", fg=Color.black, bg=Color.red)
+        ansiprint(
+            f"The source file '{src}' does not exist.", fg=Color.black, bg=Color.red
+        )
     elif comp == Cmp.same:
         return
     try:
