@@ -5,7 +5,7 @@
 # Copyright © 2018 R.F. Smith <rsmith@xs4all.nl>.
 # SPDX-License-Identifier: MIT
 # Created: 2014-03-09T17:08:09+01:00
-# Last modified: 2018-07-08T13:24:01+0200
+# Last modified: 2020-08-01T22:58:55+0200
 """
 Script for deploying files.
 
@@ -25,7 +25,7 @@ import stat
 import subprocess
 import sys
 
-__version__ = '2.1'
+__version__ = '2.2'
 
 
 def check(src, perm, dest, cmds, comp, verbose=False):
@@ -99,7 +99,7 @@ def install(src, perm, dest, cmds, comp, verbose=False):
             os.chmod(dest, stat.S_IRUSR | stat.S_IWUSR)
         copyfile(src, dest)
         os.chmod(dest, perm)
-        if cmds and subprocess.call(cmds) is not 0:
+        if cmds and subprocess.call(cmds) != 0:
             ansiprint(f'Post-install commands for {dest} failed.', fg=Color.red)
     except Exception as e:
         ansiprint(f"Installing '{src}' as '{dest}' failed: {e}", fg=Color.red)
@@ -172,24 +172,19 @@ def parsefilelist():
         A list of (src, perm, dest, commands) tuples.
     """
     user = pwd.getpwuid(os.getuid()).pw_name
-    hostname = subprocess.check_output(['hostname', '-s']).decode('utf-8').strip()
+    hostname = os.environ['HOST'].split('.')[0]
     filename = '.'.join(['filelist', hostname, user])
-    with open(filename, 'r') as infile:
-        lines = infile.readlines()
-    lines = [ln.strip() for ln in lines]
-    lines = [ln for ln in lines if len(ln) and not ln.startswith('#')]
     installs = []
-    for ln in lines:
-        items = ln.split(None, 3)
-        if len(items) < 3:
-            continue
-        if len(items) > 3:
-            src, perm, dest, rem = items
-            cmds = rem.split()
-        else:
-            cmds = None
-            src, perm, dest = items
-        installs.append((src, int(perm, base=8), dest, cmds))
+    with open(filename, 'r') as infile:
+        for ln in infile:
+            if ln.startswith('#') or ln.isspace():
+                continue
+            try:
+                src, perm, dest, *cmds = ln.strip().split()
+            except ValueError:
+                ansiprint(f'Invalid line in {filename}: “{ln}”', fg=Color.red)
+                continue
+            installs.append((src, int(perm, base=8), dest, cmds))
     return installs
 
 

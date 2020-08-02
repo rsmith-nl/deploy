@@ -2,7 +2,7 @@ Managing configuration files with ‘deploy’
 ##########################################
 
 :author: Roland Smith
-:date: 2018-04-02
+:date: 2020-08-01
 :tags: python 3, deploying, installer
 
 Classification
@@ -61,12 +61,13 @@ escape codes`_ to color its output.
 .. _ANSI escape codes: http://en.wikipedia.org/wiki/ANSI_escape_code
 
 It is meant to be used from the root of e.g. a git repository.  When started,
-``deploy`` looks for and reads the file named ``filelist.$USER`` in the directory
-from which ``deploy`` is run. So when run by a user named “jdoe” it would look
-for a file ``filelist.jdoe``. This is suitable for installing files in the
-directory tree owned by ``jdoe``. For installing files system wide (e.g. in
-``/etc`` or ``/usr/local/etc``), create ``filelist.root`` and run ``deploy``
-as the root user.
+``deploy`` looks for and reads the file named ``filelist.<HOSTNAME>.$USER`` in
+the directory from which ``deploy`` is run.  So when run by a user named
+“jdoe” on the host ``foo.yourplace.home`` it would look for a file
+``filelist.foo.jdoe``.  This is suitable for installing files in the directory
+tree owned by ``jdoe``. For installing files system wide (e.g. in ``/etc`` or
+``/usr/local/etc``), create ``filelist.root`` and run ``deploy`` as the root
+user.
 
 
 File format
@@ -86,7 +87,7 @@ The other non comment lines all have the same format::
 * The *mode* is an octal number indicating the permissions of the destination
   file, see chmod(1).
 * The *destination path* should be an absolute path including the name of
-  the installed file. It may not contain whitespace. The reason for including
+  the installed file. It *may not* contain whitespace. The reason for including
   the filename is so that you can e.g. install a file ``profile`` as
   ``/home/jdoe/.profile``.
 * The rest of the line is considered the *post-install commands*. This may be
@@ -171,10 +172,13 @@ Requirements
 ============
 
 The ``deploy`` program was written for Python 3.6+ (developed and tested with
-``python3.6``). It has no dependencies outside of Python's standard library.
+``python3.7``). It has no dependencies outside of Python's standard library.
+
+For running the checks with ``make check``, pylama_ is required.
 
 For running the tests in ``tests.py``, py.test_ is required.
 
+.. _pylama: https://github.com/klen/pylama
 .. _py.test: http://pytest.org/latest/
 
 
@@ -204,5 +208,3 @@ Removing the program can be done by running
 .. code-block:: console
 
     # make uninstall
-
-Deploy has *not* been tested on ms-windows.
