@@ -2,7 +2,7 @@ Managing configuration files with ‘deploy’
 ##########################################
 
 :author: Roland Smith
-:date: 2020-08-01
+:date: 2020-09-20
 :tags: python 3, deploying, installer
 
 Classification
@@ -61,13 +61,13 @@ escape codes`_ to color its output.
 .. _ANSI escape codes: http://en.wikipedia.org/wiki/ANSI_escape_code
 
 It is meant to be used from the root of e.g. a git repository.  When started,
-``deploy`` looks for and reads the file named ``filelist.<HOSTNAME>.$USER`` in
-the directory from which ``deploy`` is run.  So when run by a user named
-“jdoe” on the host ``foo.yourplace.home`` it would look for a file
-``filelist.foo.jdoe``.  This is suitable for installing files in the directory
-tree owned by ``jdoe``. For installing files system wide (e.g. in ``/etc`` or
-``/usr/local/etc``), create ``filelist.root`` and run ``deploy`` as the root
-user.
+``deploy`` looks for and reads the file named ``filelist.$USER`` and
+``filelist.<HOSTNAME>.$USER`` in the directory from which ``deploy`` is run.
+So when run by a user named “jdoe” on the host ``foo.yourplace.home`` it would
+look for the files ``filelist.jdoe`` and ``filelist.foo.jdoe``.  This is
+suitable for installing files in the directory tree owned by ``jdoe``. For
+installing files system wide (e.g. in ``/etc`` or ``/usr/local/etc``), create
+``filelist.root`` or ``filelist.<HOSTNAME>.root`` and run ``deploy`` as the root user.
 
 
 File format

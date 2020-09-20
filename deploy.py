@@ -5,13 +5,14 @@
 # Copyright © 2018 R.F. Smith <rsmith@xs4all.nl>.
 # SPDX-License-Identifier: MIT
 # Created: 2014-03-09T17:08:09+01:00
-# Last modified: 2020-08-02T11:10:32+0200
+# Last modified: 2020-09-20T13:50:39+0200
 """
 Script for deploying files.
 
 It can check for differences, show diffs and install files. It will only work if
-a file named 'filelist.<host>.<name>' is present, where <host> is the host name
-without domain, and <name> is the login name of the user.
+a file named 'filelist.<host>.<name>' or 'filelist.<name>' is present, where <host>
+is the host name without domain, and <name> is the login name of the user. If both
+are present the first form is processed last.
 """
 
 from difflib import unified_diff
@@ -25,7 +26,7 @@ import stat
 import subprocess
 import sys
 
-__version__ = '2.2'
+__version__ = '2.3'
 
 
 def check(src, perm, dest, cmds, comp, verbose=False):
@@ -147,50 +148,58 @@ def main(argv):
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        '-v', '--verbose', action='store_true', help='also report if files are the same'
+        '-v',
+        '--verbose',
+        action='store_true',
+        help='also report if files are the same',
+        default=False
     )
     parser.add_argument('-V', '--version', action='version', version=__version__)
     parser.add_argument('command', choices=cmdset.keys())
     args = parser.parse_args(argv)
-    verbose = False
     fn = cmdset[args.command]
-    if args.verbose:
-        verbose = True
     try:
-        install_data = parsefilelist()
+        install_data = parsefilelist(args.verbose)
     except Exception as e:
         ansiprint(str(e), fg=Color.red)
         parser.print_help()
         sys.exit(1)
     for src, perm, dest, cmds in install_data:
         cv = compare(src, dest)
-        fn(src, perm, dest, cmds, cv, verbose)
+        fn(src, perm, dest, cmds, cv, args.verbose)
 
 
-def parsefilelist():
+def parsefilelist(verbose):
     """
     Parse a install file list.
 
-    The install file list should have the name “filelist.<hostname>.<user>”,
-    where the hostname is *without* the domain.
+    The install file list should have the name 'filelist.<user>' or 'filelist.<hostname>.<user>',
+    where the hostname is *without* the domain. Both are tried, in the order given above.
 
     Returns:
         A list of (src, perm, dest, commands) tuples.
     """
     user = pwd.getpwuid(os.getuid()).pw_name
     hostname = os.environ['HOST'].split('.')[0]
-    filename = '.'.join(['filelist', hostname, user])
+    filenames = [f"filelist.{user}", f"filelist.{hostname}.{user}"]
     installs = []
-    with open(filename, 'r') as infile:
-        for ln in infile:
-            if ln.startswith('#') or ln.isspace():
-                continue
-            try:
-                src, perm, dest, *cmds = ln.strip().split()
-            except ValueError:
-                ansiprint(f'Invalid line in {filename}: “{ln}”', fg=Color.red)
-                continue
-            installs.append((src, int(perm, base=8), dest, cmds))
+    for filename in filenames:
+        try:
+            with open(filename, 'r') as infile:
+                for ln in infile:
+                    if ln.startswith('#') or ln.isspace():
+                        continue
+                    try:
+                        src, perm, dest, *cmds = ln.strip().split()
+                    except ValueError:
+                        ansiprint(f"Invalid line in {filename}: '{ln}'", fg=Color.red)
+                        continue
+                    installs.append((src, int(perm, base=8), dest, cmds))
+        except FileNotFoundError:
+            if verbose:
+                ansiprint(
+                    f"Command file '{filename}' not found, skipping.", fg=Color.cyan
+                )
     return installs
 
 
