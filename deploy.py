@@ -26,7 +26,7 @@ import stat
 import subprocess
 import sys
 
-__version__ = '2.3'
+__version__ = "2020.09.20"
 
 
 def check(src, perm, dest, cmds, comp, verbose=False):
