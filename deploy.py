@@ -45,7 +45,9 @@ def check(src, perm, dest, cmds, comp, verbose=False):
         ansiprint(f"The file '{src}' differs from '{dest}'.", fg=Color.red, i=True)
     elif comp == Cmp.nodest:
         ansiprint(
-            f"The destination file '{dest}' does not exist", fg=Color.black, bg=Color.red
+            f"The destination file '{dest}' does not exist",
+            fg=Color.black,
+            bg=Color.red,
         )
     elif comp == Cmp.nosrc:
         ansiprint(
@@ -107,14 +109,14 @@ def install(src, perm, dest, cmds, comp, verbose=False):
         copyfile(src, dest)
         os.chmod(dest, perm)
         if cmds and subprocess.call(cmds) != 0:
-            ansiprint(f'Post-install commands for {dest} failed.', fg=Color.red)
+            ansiprint(f"Post-install commands for {dest} failed.", fg=Color.red)
     except Exception as e:
         ansiprint(f"Installing '{src}' as '{dest}' failed: {e}", fg=Color.red)
         return
     ansiprint(f"File '{src}' was successfully installed as '{dest}'.", fg=Color.green)
 
 
-cmdset = {'check': check, 'status': status, 'diff': diff, 'install': install}
+cmdset = {"check": check, "status": status, "diff": diff, "install": install}
 
 
 class Color(IntEnum):
@@ -148,14 +150,14 @@ def main(argv):
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        '-v',
-        '--verbose',
-        action='store_true',
-        help='also report if files are the same',
-        default=False
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="also report if files are the same",
+        default=False,
     )
-    parser.add_argument('-V', '--version', action='version', version=__version__)
-    parser.add_argument('command', choices=cmdset.keys())
+    parser.add_argument("-V", "--version", action="version", version=__version__)
+    parser.add_argument("command", choices=cmdset.keys())
     args = parser.parse_args(argv)
     fn = cmdset[args.command]
     try:
@@ -180,14 +182,14 @@ def parsefilelist(verbose):
         A list of (src, perm, dest, commands) tuples.
     """
     user = pwd.getpwuid(os.getuid()).pw_name
-    hostname = os.environ['HOST'].split('.')[0]
+    hostname = os.environ["HOST"].split(".")[0]
     filenames = [f"filelist.{user}", f"filelist.{hostname}.{user}"]
     installs = []
     for filename in filenames:
         try:
-            with open(filename, 'r') as infile:
+            with open(filename, "r") as infile:
                 for ln in infile:
-                    if ln.startswith('#') or ln.isspace():
+                    if ln.startswith("#") or ln.isspace():
                         continue
                     try:
                         src, perm, dest, *cmds = ln.strip().split()
@@ -219,19 +221,19 @@ def compare(src, dest):
         return Cmp.nosrc
     if not xdest:
         return Cmp.nodest
-    with open(src, 'rb') as s:
+    with open(src, "rb") as s:
         csrc = sha256(s.read()).digest()
     if xdest:
-        with open(dest, 'rb') as d:
+        with open(dest, "rb") as d:
             cdest = sha256(d.read()).digest()
     else:
-        cdest = b''
+        cdest = b""
     if csrc == cdest:
         return Cmp.same
     return Cmp.differ
 
 
-def ansiprint(s, fg='', bg='', i=False):
+def ansiprint(s, fg="", bg="", i=False):
     """
     Print a colored text with ansi escape sequences.
 
@@ -240,15 +242,15 @@ def ansiprint(s, fg='', bg='', i=False):
         bg: Optional background color.
         i: Boolean to indicate intense colors (default False)
     """
-    esc = '\033[{:d}{}m'
-    iv = ''
+    esc = "\033[{:d}{}m"
+    iv = ""
     if i:
         iv = ";1"
-    if fg != '':
+    if fg != "":
         fg = esc.format(30 + fg, iv)
-    if bg != '':
+    if bg != "":
         bg = esc.format(40 + bg, iv)
-    print(''.join([fg, bg, s, esc.format(0, '')]))
+    print("".join([fg, bg, s, esc.format(0, "")]))
 
 
 def colordiff(txt):
@@ -260,20 +262,20 @@ def colordiff(txt):
     """
     for line in txt:
         line = line.rstrip()
-        if line.startswith(('+++ ', '--- ')):
+        if line.startswith(("+++ ", "--- ")):
             ansiprint(line, fg=Color.yellow, i=True)
             continue
-        if line.startswith('+'):
+        if line.startswith("+"):
             ansiprint(line, fg=Color.green, i=True)
             continue
-        if line.startswith('-'):
+        if line.startswith("-"):
             ansiprint(line, fg=Color.red, i=True)
             continue
-        if line.startswith('@@'):
+        if line.startswith("@@"):
             ansiprint(line, fg=Color.magenta, i=True)
             continue
         print(line)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(sys.argv[1:])

@@ -11,7 +11,7 @@ from deploy import compare
 
 def test_compare():
     """Tests for the compare function."""
-    assert compare('deploy.py', 'deploy.py') == 1
-    assert compare('deploy.py', 'tests.py') == 0
-    assert compare('deploy.py', 'foo') == 2
-    assert compare('bar', 'foo') == 3
+    assert compare("deploy.py", "deploy.py") == 1
+    assert compare("deploy.py", "tests.py") == 0
+    assert compare("deploy.py", "foo") == 2
+    assert compare("bar", "foo") == 3
