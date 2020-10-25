@@ -2,7 +2,7 @@ Managing configuration files with ‘deploy’
 ##########################################
 
 :author: Roland Smith
-:date: 2020-09-20
+:date: 2020-10-25
 :tags: python 3, deploying, installer
 
 Classification
@@ -191,20 +191,11 @@ Installation
     in your $PATH, modify the first line of the `deploy` program to point to
     the location of the Python 3 program *before* installing it.
 
-For a system-wide installation (UNIX-like systems):
+To install it for the local user, run::
 
-* Make sure you don't already have an identically named program installed!
-* Use ``make`` to install the script;
+    python3 setup.py install
 
-.. code-block:: console
-
-    # make install
-
-If you want to install it locally, just copy it to where you need it and make
-it executable.
-
-Removing the program can be done by running
-
-.. code-block:: console
-
-    # make uninstall
+This will install it in the user path for Python scripts.
+For POSIX operating systems this is ususally ``~/.local/bin``.
+For ms-windows this is the ``Scripts`` directory of your Python installation.
+Make sure that this directory is in your ``$PATH``.
