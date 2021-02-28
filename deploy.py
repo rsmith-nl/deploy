@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # file: deploy.py
 # vim:fileencoding=utf-8:fdm=marker:ft=python
 #
 # Copyright © 2018 R.F. Smith <rsmith@xs4all.nl>.
 # SPDX-License-Identifier: MIT
 # Created: 2014-03-09T17:08:09+01:00
-# Last modified: 2020-09-20T13:50:39+0200
+# Last modified: 2020-10-27T18:16:10+0100
 """
 Script for deploying files.
 
