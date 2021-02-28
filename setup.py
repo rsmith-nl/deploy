@@ -4,7 +4,7 @@
 #
 # Copyright © 2020 R.F. Smith <rsmith@xs4all.nl>
 # Created: 2020-10-25T12:18:04+0100
-# Last modified: 2020-10-26T23:00:26+0100
+# Last modified: 2020-10-27T18:14:27+0100
 """Script to install scripts for the local user."""
 
 import os
@@ -54,4 +54,4 @@ for script, nt_ext in scripts:
     else:
         print(f"* '{script}' would be installed as '{destname}'")
         if destname2:
-            print("  or '{destname2}'")
+            print(f"  or '{destname2}'")
