@@ -19,6 +19,8 @@ The following `PyPI classifiers`_ apply:
 * Operating System :: POSIX
 * Programming Language :: Python :: 3.6
 * Programming Language :: Python :: 3.7
+* Programming Language :: Python :: 3.8
+* Programming Language :: Python :: 3.9
 * Topic :: System :: Installation/Setup
 * Topic :: System :: Systems Administration
 * Topic :: Utilities
@@ -172,7 +174,7 @@ Requirements
 ============
 
 The ``deploy`` program was written for Python 3.6+ (developed and tested with
-``python3.7``). It has no dependencies outside of Python's standard library.
+``python3.9``). It has no dependencies outside of Python's standard library.
 
 For running the checks with ``make check``, pylama_ is required.
 
@@ -185,17 +187,15 @@ For running the tests in ``tests.py``, py.test_ is required.
 Installation
 ============
 
-.. Note::
-
-    If your system doesn't have ``\usr\bin\env``, or if your Python 3 is not
-    in your $PATH, modify the first line of the `deploy` program to point to
-    the location of the Python 3 program *before* installing it.
-
 To install it for the local user, run::
 
-    python3 setup.py install
+    python setup.py install
 
 This will install it in the user path for Python scripts.
 For POSIX operating systems this is ususally ``~/.local/bin``.
-For ms-windows this is the ``Scripts`` directory of your Python installation.
-Make sure that this directory is in your ``$PATH``.
+For ms-windows this is the ``Scripts`` directory of your Python installation
+or another local directory.
+Make sure that this directory is in your ``$PATH`` environment variable.
+
+On POSIX systems, run ``make install`` as root to install ``deploy`` in
+``/usr/local/bin``.
